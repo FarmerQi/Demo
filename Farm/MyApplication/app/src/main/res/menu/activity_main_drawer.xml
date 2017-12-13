@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/First_item"
+            android:icon="@drawable/like"
+            android:title="Like">
+        </item>
+
+        <item
+            android:id="@+id/Second_item"
+            android:icon="@drawable/pic"
+            android:title="Picture">
+        </item>
+
+        <item
+            android:id="@+id/Third_item"
+            android:icon="@drawable/message"
+            android:title="Message">
+
+        </item>
+    </group>
+
+
+
+
+    <item android:title="HHHHH">
+        <menu>
+            <item
+                android:id="@+id/Fourth_item"
+                android:icon="@drawable/like"
+                android:title="LOL">
+            </item>
+            <item
+                android:id="@+id/fifth_item"
+                android:icon="@drawable/user"
+                android:title="PUBG">
+            </item>
+        </menu>
+    </item>
+
+
+
+
+
+</menu>
