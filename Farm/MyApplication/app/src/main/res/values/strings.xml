@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Farm</string>
+    <string name="drawer_layout_open_state">打开了Drawer</string>
+    <string name="drawer_layout_close_state">关闭了Drawer</string>
+
     <string name="introduce">FarmerQi An android programmer!!!</string>
 </resources>
