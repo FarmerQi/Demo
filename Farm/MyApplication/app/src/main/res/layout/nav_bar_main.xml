@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:gravity="bottom"
-        android:background="@color/papayawhip"
+        android:background="@color/lightblue"
         android:orientation="horizontal"
         >
 
