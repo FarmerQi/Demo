@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,14 +12,21 @@
     android:layout_marginBottom="5dp"
     app:cardCornerRadius="20dp">
 
-    <ImageView
-        android:id="@+id/cardview_image"
-        android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:src="@drawable/bg_2018"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:id="@+id/card_view_text"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"/>
+
+    <!--<ImageView-->
+        <!--android:id="@+id/cardview_image"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="280dp"-->
+        <!--android:src="@drawable/bg_2018"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_marginTop="20dp"-->
+        <!--android:layout_marginBottom="20dp"/>-->
 
 </android.support.v7.widget.CardView>
