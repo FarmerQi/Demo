@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/pic_id_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Pic ID"
+        />
+
+    <EditText
+        android:id="@+id/user_name_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="User Name" />
+
+    <EditText
+        android:id="@+id/user_psw_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword" 
+        android:hint="PassWord"/>
+
+    <EditText
+        android:id="@+id/user_phone_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="phone" 
+        android:hint="Phone Number"/>
+
+    <EditText
+        android:id="@+id/user_identity_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Identity Number" />
+
+    <EditText
+        android:id="@+id/user_addr_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPostalAddress"
+        android:hint="Address"/>
+    <Button
+        android:id="@+id/submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="提交"
+        android:textSize="30sp"/>
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:src="@drawable/camera"/>
+    <ImageButton
+        android:id="@+id/image_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/camera"/>
+</LinearLayout>
