@@ -11,16 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Base"
         >
-        <activity android:name=".SecondActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"></action>
                 <category android:name="android.intent.category.LAUNCHER"></category>
             </intent-filter>
         </activity>
+        <activity android:name=".SecondActivity">
 
-
-
-
+        </activity>
         <provider
             android:authorities="com.example.farmerqi.farm.fileProvider"
             android:name="android.support.v4.content.FileProvider"

@@ -135,12 +135,14 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 } else {
                     Toast.makeText(SecondActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
                 }
+                break;
             case REQUEST_ALBUM:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     openAlbum();
                 }else {
                     Toast.makeText(SecondActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
                 }
+                break;
         }
 
     }

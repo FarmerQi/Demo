@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.fourth_button:
                 Toast.makeText(this,"打开第二个活动",Toast.LENGTH_LONG).show();
-//                Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
-//                startActivity(toSecondActivity);
+                Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
+                startActivity(toSecondActivity);
 
         }
 
