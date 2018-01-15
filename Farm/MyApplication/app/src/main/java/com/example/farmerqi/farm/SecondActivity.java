@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
@@ -54,6 +55,7 @@ import okhttp3.Response;
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener{
     private static final String RESULT_TAG = "responce";
     private static final int REQUEST_PHOTO = 1;
+    private static final int REQUEST_ALBUM = 2;
 
     private EditText picID;
     private EditText userName;
@@ -65,18 +67,21 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     private TextView resultText;
     private ImageView imageView;
     private ImageButton imageButton;
+    private ImageButton albumImageButton;
+    private File imageFile;
+    private Uri imageUri;
     Map<String,String> result = new HashMap<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test);
         initView();
-        updatePhotoView();
         submitButton.setOnClickListener(this);
         imageButton.setOnClickListener(this);
+        albumImageButton.setOnClickListener(this);
     }
+
     //初始化控件
     public void initView(){
         picID = (EditText)findViewById(R.id.pic_id_text);
@@ -89,9 +94,10 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         resultText = (TextView)findViewById(R.id.result_text);
         imageButton = (ImageButton)findViewById(R.id.image_button);
         imageView = (ImageView)findViewById(R.id.image_view);
+        albumImageButton = (ImageButton)findViewById(R.id.image_button_album);
     }
-    //采用OkHttp发送请求
 
+    //采用OkHttp发送请求
     private String initData(){
         Gson request = new Gson();
         result.put("UserPicID",picID.getText().toString());
@@ -103,8 +109,6 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         return request.toJson(result);
     }
 
-
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -115,24 +119,33 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.image_button:
                 testTakePhotoPermission();
                 break;
+            case R.id.image_button_album:
+                testAlbumPermission();
+                break;
         }
     }
-
-
 
     //申请权限完成后的回调函数
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_PHOTO) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                takePhoto();
-            } else {
-                Toast.makeText(SecondActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
-            }
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case REQUEST_PHOTO:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    takePhoto();
+                } else {
+                    Toast.makeText(SecondActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                }
+            case REQUEST_ALBUM:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    openAlbum();
+                }else {
+                    Toast.makeText(SecondActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                }
         }
+
     }
+
+
     //检测是否获取拍照权限
     private void testTakePhotoPermission(){
         if (ContextCompat.checkSelfPermission(SecondActivity.this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -141,42 +154,57 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             takePhoto();
         }
     }
+
+    //检测是否拥有打开相册的权限
+    private void testAlbumPermission(){
+        if (ContextCompat.checkSelfPermission(SecondActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(SecondActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_ALBUM);
+        }else {
+            openAlbum();
+        }
+    }
+
+    //打开相册
+    private void openAlbum(){
+        Intent openAlbumIntent = new Intent("android.intent.action.GET_CONTENT");
+        openAlbumIntent.setType("image/*");
+        startActivityForResult(openAlbumIntent,REQUEST_ALBUM);
+    }
+
     //进行拍照
     private void takePhoto(){
+        imageFile = new File(getApplicationContext().getFilesDir(),"test.jpg");//相机拍照的文件
+        if (imageFile.exists()){
+            imageFile.delete();
+        }
         Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File imageFile = initImageFile();
-        Uri uri = FileProvider.getUriForFile(SecondActivity.this, "com.example.farmerqi.farm.provider", imageFile);
-        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        imageUri = FileProvider.getUriForFile(SecondActivity.this, "com.example.farmerqi.farm.fileProvider", imageFile);
+        captureImage.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         List<ResolveInfo> cameraActivity = getPackageManager().queryIntentActivities(captureImage, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo activity : cameraActivity) {
-            grantUriPermission(activity.activityInfo.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            grantUriPermission(activity.activityInfo.packageName, imageUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             startActivityForResult(captureImage, REQUEST_PHOTO);
         }
     }
 
-    //初始化拍照存储的路径，并返回新的文件
-    private File initImageFile(){
-        File imagePath = new File(getApplicationContext().getFilesDir(),"images");
-        File imageFile = new File(imagePath,"test.jpg");
-        return imageFile;
-    }
-
-    //初始化图像
-    private void updatePhotoView(){
-        if (initImageFile() == null || initImageFile().exists()){
-            imageView.setImageDrawable(null);
-        }else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(initImageFile().getPath(),SecondActivity.this);
-            imageView.setImageBitmap(bitmap);
-        }
-    }
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data){
-        if (requestCode == REQUEST_PHOTO){
-            Uri uri = FileProvider.getUriForFile(SecondActivity.this,"com.example.farmerqi.farm.provider",initImageFile());
-            SecondActivity.this.revokeUriPermission(uri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            updatePhotoView();
+        switch (requestCode){
+            case REQUEST_PHOTO:
+                try {
+                    //Bitmap result = PictureUtils.getScaledBitmap(imageFile.getPath(),SecondActivity.this);
+                    Bitmap resultPic = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                    imageView.setImageBitmap(resultPic);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+//            case REQUEST_ALBUM:
+
+            default:
+                break;
         }
+
     }
 
     //使用OkHttp3发送json数据类型的请求

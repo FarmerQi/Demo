@@ -1,5 +1,6 @@
 package com.example.farmerqi.farm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -27,11 +29,16 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,View.OnClickListener{
     ImageView userImage;
     RecyclerView recyclerView;
+    RelativeLayout user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        user = (RelativeLayout) findViewById(R.id.fourth_button);
+        user.setOnClickListener(this);
+
         Toolbar mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
@@ -82,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.Fourth_item:
             case R.id.fifth_item:
                 Toast.makeText(this,"Hello,FarmerQi!",Toast.LENGTH_SHORT).show();
+                break;
+
         }
         DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.nav_drawer_layout);
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -91,8 +100,16 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.nav_user_image){
-            Toast.makeText(this,"hi,FarmerQi",Toast.LENGTH_LONG).show();
+        switch (v.getId()){
+            case R.id.nav_user_image:
+                Toast.makeText(this,"hi,FarmerQi",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.fourth_button:
+                Toast.makeText(this,"打开第二个活动",Toast.LENGTH_LONG).show();
+//                Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
+//                startActivity(toSecondActivity);
+
         }
+
     }
 }
