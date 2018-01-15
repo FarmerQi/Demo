@@ -2,16 +2,19 @@ package com.example.farmerqi.farm;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -147,7 +150,6 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-
     //检测是否获取拍照权限
     private void testTakePhotoPermission(){
         if (ContextCompat.checkSelfPermission(SecondActivity.this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -193,20 +195,76 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     public void onActivityResult(int requestCode,int resultCode,Intent data){
         switch (requestCode){
             case REQUEST_PHOTO:
-                try {
-                    //Bitmap result = PictureUtils.getScaledBitmap(imageFile.getPath(),SecondActivity.this);
-                    Bitmap resultPic = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                    imageView.setImageBitmap(resultPic);
-                }catch (Exception e){
-                    e.printStackTrace();
+                if (resultCode == RESULT_OK){
+                    try {
+                        Bitmap result = PictureUtils.getScaledBitmap(imageFile.getPath(),SecondActivity.this);
+                        //Bitmap resultPic = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        imageView.setImageBitmap(result);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 break;
 //            case REQUEST_ALBUM:
-
+//                if (resultCode == RESULT_OK){
+//
+//                }
+//
+//                break;
             default:
                 break;
         }
 
+    }
+
+    //处理从相册获取的照片
+    //在API>=19时的处理方式
+    private void handleImageAfterKitKat(Intent data){
+        String imagePath = null;
+        Uri uri = data.getData();
+        //如果是document类型的uri，通过document ID处理
+        if (DocumentsContract.isDocumentUri(this,uri)){
+            String docId = DocumentsContract.getDocumentId(uri);
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())){
+                String id = docId.split(":")[1];
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,selection);
+            }else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())){
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),Long.valueOf(docId)){
+                    imagePath = getImagePath(contentUri,null);
+                }
+            }else if ("content".equalsIgnoreCase(uri.getScheme())){
+                imagePath = getImagePath(uri,null);
+            }else if ("file".equalsIgnoreCase(uri.getScheme())){
+                imagePath = uri.getPath();
+            }
+        }
+        displayImage(imagePath);
+    }
+
+    //API低于19时的处理方式
+
+    //同归Uri获取图片路径
+    private String getImagePath(Uri uri,String selection){
+        String path = null;
+        Cursor cursor = getContentResolver().query(uri,null,selection,null,null);
+        if (cursor != null){
+            if (cursor.moveToFirst()){
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    //根据图片路径处理图片
+    private void displayImage(String path){
+        if (path != null){
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            imageView.setImageBitmap(bitmap);
+        }else {
+            Toast.makeText(this,"fail to get IMAGE!",Toast.LENGTH_LONG).show();
+        }
     }
 
     //使用OkHttp3发送json数据类型的请求
