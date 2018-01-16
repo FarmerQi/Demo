@@ -46,6 +46,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -71,6 +72,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     private ImageView imageView;
     private ImageButton imageButton;
     private ImageButton albumImageButton;
+    private Button sendImageButton;
     private File imageFile;
     private Uri imageUri;
     Map<String,String> result = new HashMap<>();
@@ -83,6 +85,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         submitButton.setOnClickListener(this);
         imageButton.setOnClickListener(this);
         albumImageButton.setOnClickListener(this);
+        sendImageButton.setOnClickListener(this);
     }
 
     //初始化控件
@@ -98,6 +101,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         imageButton = (ImageButton)findViewById(R.id.image_button);
         imageView = (ImageView)findViewById(R.id.image_view);
         albumImageButton = (ImageButton)findViewById(R.id.image_button_album);
+        sendImageButton = (Button)findViewById(R.id.send_image_button);
     }
 
     //采用OkHttp发送请求
@@ -124,6 +128,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.image_button_album:
                 testAlbumPermission();
+                break;
+            case R.id.send_image_button:
+                sendPic(imageFile);
                 break;
         }
     }
@@ -205,12 +212,16 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 }
                 break;
-//            case REQUEST_ALBUM:
-//                if (resultCode == RESULT_OK){
-//
-//                }
-//
-//                break;
+            case REQUEST_ALBUM:
+                if (resultCode == RESULT_OK){
+                    if (Build.VERSION.SDK_INT >= 19){
+                        handleImageAfterKitKat(data);
+                    }else {
+                        handleImageBeforeKitKat(data);
+                    }
+                }
+
+                break;
             default:
                 break;
         }
@@ -230,9 +241,8 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 String selection = MediaStore.Images.Media._ID + "=" + id;
                 imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,selection);
             }else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())){
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),Long.valueOf(docId)){
-                    imagePath = getImagePath(contentUri,null);
-                }
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),Long.valueOf(docId));
+                imagePath = getImagePath(contentUri,null);
             }else if ("content".equalsIgnoreCase(uri.getScheme())){
                 imagePath = getImagePath(uri,null);
             }else if ("file".equalsIgnoreCase(uri.getScheme())){
@@ -243,7 +253,11 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     //API低于19时的处理方式
-
+    private void handleImageBeforeKitKat(Intent data){
+        Uri uri = data.getData();
+        String imagePath = getImagePath(uri,null);
+        displayImage(imagePath);
+    }
     //同归Uri获取图片路径
     private String getImagePath(Uri uri,String selection){
         String path = null;
@@ -260,7 +274,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     //根据图片路径处理图片
     private void displayImage(String path){
         if (path != null){
-            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            Bitmap bitmap = PictureUtils.getScaledBitmap(path,this);
             imageView.setImageBitmap(bitmap);
         }else {
             Toast.makeText(this,"fail to get IMAGE!",Toast.LENGTH_LONG).show();
@@ -277,6 +291,35 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                             .writeTimeout(10,TimeUnit.SECONDS).readTimeout(20,TimeUnit.SECONDS).build();
                     RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"),input);
                     Request request = new Request.Builder().url("http://farmerqi.imwork.net/user").post(requestBody).build();
+                    okHttpClient.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.e(RESULT_TAG,"fail to connnect");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Log.d(RESULT_TAG,"GET RESPONCE");
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    //使用OkHttp3发送图片
+    private void sendPic(final File input){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
+                            .writeTimeout(10,TimeUnit.SECONDS).readTimeout(20,TimeUnit.SECONDS).build();
+                    //RequestBody requestBody = FormBody.create(MediaType.parse("multipart/form-data"),input);
+                    RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("file",input.getName(),RequestBody.create(MediaType.parse("image/jpg"),input)).build();
+                    Request request = new Request.Builder().url("http://farmerqi.imwork.net/pic").post(requestBody).build();
                     okHttpClient.newCall(request).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {

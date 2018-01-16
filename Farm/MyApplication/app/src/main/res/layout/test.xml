@@ -90,6 +90,15 @@
             android:layout_gravity="center"
             android:scaleType="centerInside"
             android:src="@drawable/camera"/>
+        <Button
+            android:id="@+id/send_image_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center"
+            android:background="#1296DB"
+            android:text="发送"/>
 
     </LinearLayout>
 
