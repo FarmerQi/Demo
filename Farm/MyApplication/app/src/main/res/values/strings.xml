@@ -4,4 +4,5 @@
     <string name="drawer_layout_close_state">关闭了Drawer</string>
 
     <string name="introduce">FarmerQi An android programmer!!!</string>
+    <string name="margin">20dp</string>
 </resources>
