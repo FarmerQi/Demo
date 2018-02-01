@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements
     ImageView userImage;
     RecyclerView recyclerView;
     RelativeLayout user;
+    RelativeLayout login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements
 
         user = (RelativeLayout) findViewById(R.id.fourth_button);
         user.setOnClickListener(this);
+
+        login = (RelativeLayout) findViewById(R.id.third_button);
+        login.setOnClickListener(this);
 
         Toolbar mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -108,6 +112,12 @@ public class MainActivity extends AppCompatActivity implements
                 Toast.makeText(this,"打开第二个活动",Toast.LENGTH_LONG).show();
                 Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
                 startActivity(toSecondActivity);
+                break;
+            case R.id.third_button:
+                Toast.makeText(this,"打开登录界面",Toast.LENGTH_LONG).show();
+                Intent toLoginActivity = new Intent(MainActivity.this,LoginActivity.class);
+                startActivity(toLoginActivity);
+                break;
 
         }
 
