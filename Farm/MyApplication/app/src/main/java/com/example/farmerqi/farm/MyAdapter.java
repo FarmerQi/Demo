@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.example.farmerqi.farm.MainActivity;
 import com.example.farmerqi.farm.R;
+import com.example.farmerqi.farm.model.Picture;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +21,9 @@ import java.util.List;
  */
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
-    private List<String> dates = null;
-    public MyAdapter(List<String> dates ){
+    private List<Picture> dates = null;
+
+    public MyAdapter(List<Picture> dates ){
         this.dates = dates;
     }
 
@@ -34,7 +37,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.textView.setText(dates.get(position));
+        holder.textView.setText(dates.get(position).getName());
+        Picasso.get().load(dates.get(position).getLocation()).into(holder.imageView);
     }
 
     @Override
@@ -43,10 +47,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
     }
     class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView textView;
+        public ImageView imageView;
         public MyViewHolder(View view){
             super(view);
             textView = (TextView) view.findViewById(R.id.card_view_text);
-
+            imageView = (ImageView) view.findViewById(R.id.cardview_image);
         }
     }
 }

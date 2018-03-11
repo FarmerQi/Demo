@@ -11,15 +11,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.example.farmerqi.farm.model.Picture;
+
+
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by FarmerQi on 2017/12/13.
@@ -27,10 +43,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,View.OnClickListener{
+    private static final String OKHTTP_MESSAGE = "FROM SERVER:---------";
     ImageView userImage;
     RecyclerView recyclerView;
     RelativeLayout user;
     RelativeLayout login;
+    Button sendButton;
+    List<Picture> input;
+    List<Picture> output = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -58,16 +79,15 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
         userImage.setOnClickListener(this);
 
+        sendButton = (Button)findViewById(R.id.send_button);
+        sendButton.setOnClickListener(this);
+
         recyclerView = (RecyclerView)findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(false);
-        List<String> input = new ArrayList<String>();
-        input.add("213123123");
-        input.add("dsadasd");
-        input.add("dadda");
-        input.add("dasd");
-        MyAdapter myAdapter = new MyAdapter(input);
-        recyclerView.setAdapter(myAdapter);
+
+
+
 
     }
 
@@ -118,8 +138,41 @@ public class MainActivity extends AppCompatActivity implements
                 Intent toLoginActivity = new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(toLoginActivity);
                 break;
+            case R.id.send_button:
+                MyAdapter myAdapter = new MyAdapter(getPic());
+                recyclerView.setAdapter(myAdapter);
 
         }
 
     }
+
+    //获取返回的json数据
+    public List<Picture> getPic(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+                    final Request request = new Request.Builder().url("http://192.168.191.1:8080/pic/findAll").build();
+                    okHttpClient.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Log.e(OKHTTP_MESSAGE,"Fail to connect!");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Log.e(OKHTTP_MESSAGE,response.body().string());
+                            output = JSON.parseObject(response.body().string(), new TypeReference<List<Picture>>(){});
+                        }
+                    });
+                }catch (Exception e){
+
+                }
+            }
+        }).start();
+        return output;
+    }
+
 }

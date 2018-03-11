@@ -20,6 +20,11 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         android:layout_above="@id/bottom_nav">
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="发送"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/main_recycler_view"

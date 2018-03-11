@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.farmerqi.farm.model.User;
-import com.google.gson.Gson;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,9 +59,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 User user = new User();
                 user.setName(username);
                 user.setPassword(password);
-                Gson input = new Gson();
-                String inputString = input.toJson(user);
-                login(inputString);
+//                Gson input = new Gson();
+//                String inputString = input.toJson(user);
+//                login(inputString);
                 break;
             case R.id.register_text_view:
 

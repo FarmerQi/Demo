@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -51,6 +52,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import top.zibin.luban.Luban;
+import top.zibin.luban.OnCompressListener;
 
 /**
  * Created by FarmerQi on 2018/1/9.
@@ -60,6 +63,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
     private static final String RESULT_TAG = "responce";
     private static final int REQUEST_PHOTO = 1;
     private static final int REQUEST_ALBUM = 2;
+    private static final String COMPRESS_START = "开始压缩图片";
+    private static final String COMPRESSING = "正在压缩";
+    private static final String COMPRESS_RESULT = "压缩完成";
 
     private EditText picID;
     private EditText userName;
@@ -121,7 +127,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()){
             case R.id.submit_button:
                 Toast.makeText(SecondActivity.this,initData(),Toast.LENGTH_SHORT).show();
-                sendRequest(initData());
+//                sendRequest(initData());
                 break;
             case R.id.image_button:
                 testTakePhotoPermission();
@@ -130,7 +136,9 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
                 testAlbumPermission();
                 break;
             case R.id.send_image_button:
-                sendPic(imageFile);
+                Log.e(RESULT_TAG,"send image to server");
+                Log.e(RESULT_TAG,"图片大小为：" + imageFile.length());
+                compressPicAndSend(imageFile);
                 break;
         }
     }
@@ -258,7 +266,7 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
         String imagePath = getImagePath(uri,null);
         displayImage(imagePath);
     }
-    //同归Uri获取图片路径
+    //通过Uri获取图片路径
     private String getImagePath(Uri uri,String selection){
         String path = null;
         Cursor cursor = getContentResolver().query(uri,null,selection,null,null);
@@ -280,17 +288,47 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(this,"fail to get IMAGE!",Toast.LENGTH_LONG).show();
         }
     }
+//    //客户端无需发送JSON格式的数据，在服务器端可以按照常规的Http请求的方式来处理这些请求
+//    //使用OkHttp3发送json数据类型的请求
+//    private void sendRequest(final String input){
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
+//                            .writeTimeout(10,TimeUnit.SECONDS).readTimeout(20,TimeUnit.SECONDS).build();
+//                    RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"),input);
+//                    Request request = new Request.Builder().url("http://farmerqi.imwork.net/user").post(requestBody).build();
+//                    okHttpClient.newCall(request).enqueue(new Callback() {
+//                        @Override
+//                        public void onFailure(Call call, IOException e) {
+//                            Log.e(RESULT_TAG,"fail to connnect");
+//                        }
+//
+//                        @Override
+//                        public void onResponse(Call call, Response response) throws IOException {
+//                            Log.d(RESULT_TAG,"GET RESPONCE");
+//                        }
+//                    });
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+//    }
 
-    //使用OkHttp3发送json数据类型的请求
-    private void sendRequest(final String input){
+    //使用OkHttp3发送图片
+    private void sendPic(final File input){
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
                             .writeTimeout(10,TimeUnit.SECONDS).readTimeout(20,TimeUnit.SECONDS).build();
-                    RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"),input);
-                    Request request = new Request.Builder().url("http://farmerqi.imwork.net/user").post(requestBody).build();
+                    //RequestBody requestBody = FormBody.create(MediaType.parse("multipart/form-data"),input);
+                    RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("picture",input.getName(),RequestBody.create(MediaType.parse("multipart/form-data"),input)).build();
+                    Request request = new Request.Builder().url("http://192.168.191.1:8080/pic/upload").post(requestBody).build();
                     okHttpClient.newCall(request).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
@@ -308,32 +346,35 @@ public class SecondActivity extends AppCompatActivity implements View.OnClickLis
             }
         }).start();
     }
+    public void compressPicAndSend(final File input){
 
-    //使用OkHttp3发送图片
-    private void sendPic(final File input){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
-                            .writeTimeout(10,TimeUnit.SECONDS).readTimeout(20,TimeUnit.SECONDS).build();
-                    //RequestBody requestBody = FormBody.create(MediaType.parse("multipart/form-data"),input);
-                    RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("file",input.getName(),RequestBody.create(MediaType.parse("image/jpg"),input)).build();
-                    Request request = new Request.Builder().url("http://farmerqi.imwork.net/pic").post(requestBody).build();
-                    okHttpClient.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            Log.e(RESULT_TAG,"fail to connnect");
-                        }
+                Luban.with(getApplicationContext())
+                        .load(input)
+                        .ignoreBy(100)
+                        .setCompressListener(new OnCompressListener() {
+                            @Override
+                            public void onStart() {
+                                Log.e(COMPRESS_START,"Start compress!!!");
+                                Log.e(COMPRESSING,"Compressing....");
+                            }
 
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            Log.d(RESULT_TAG,"GET RESPONCE");
-                        }
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                            @Override
+                            public void onSuccess(File file) {
+                                Log.e(COMPRESS_RESULT,"Finish");
+                                Log.e(COMPRESS_RESULT,file.getPath());
+                                Log.e(RESULT_TAG,"压缩后图片大小" + file.length());
+                                sendPic(file);
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+                        }).launch();
             }
         }).start();
     }
