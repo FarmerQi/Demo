@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements
         recyclerView = (RecyclerView)findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(false);
+        recyclerView.setItemViewCacheSize(10);
 
 
 
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
-                            Log.e(OKHTTP_MESSAGE,response.body().string());
+                            //Log.e(OKHTTP_MESSAGE,response.body().string());
                             output = JSON.parseObject(response.body().string(), new TypeReference<List<Picture>>(){});
                         }
                     });

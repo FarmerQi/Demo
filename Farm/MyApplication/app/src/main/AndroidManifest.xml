@@ -23,9 +23,7 @@
         <activity android:name=".LoginActivity">
 
         </activity>
-        <activity android:name=".PicCompressActivity">
 
-        </activity>
         <provider
             android:authorities="com.example.farmerqi.farm.fileProvider"
             android:name="android.support.v4.content.FileProvider"
