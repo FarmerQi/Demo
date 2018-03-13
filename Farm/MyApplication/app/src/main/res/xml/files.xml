@@ -2,5 +2,5 @@
 <paths xmlns:xmls="http://schemas.android.com/apk/res/android">
     <files-path
         name="images"
-        path="./"></files-path>
+        path="images"></files-path>
 </paths>
