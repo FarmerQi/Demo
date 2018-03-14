@@ -5,4 +5,7 @@
 
     <string name="introduce">FarmerQi An android programmer!!!</string>
     <string name="margin">20dp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
