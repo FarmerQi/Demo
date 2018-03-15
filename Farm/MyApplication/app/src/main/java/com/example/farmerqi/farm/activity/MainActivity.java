@@ -1,9 +1,11 @@
-package com.example.farmerqi.farm;
+package com.example.farmerqi.farm.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,6 +23,9 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.example.farmerqi.farm.R;
+import com.example.farmerqi.farm.adapter.MyAdapter;
+import com.example.farmerqi.farm.fragment.HomeFragment;
 import com.example.farmerqi.farm.model.Picture;
 
 
@@ -76,13 +81,23 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
         userImage.setOnClickListener(this);
 
-        sendButton = (Button)findViewById(R.id.send_button);
-        sendButton.setOnClickListener(this);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment firstFragment = fragmentManager.findFragmentById(R.id.fragment_container_mainActivity);
+        if (firstFragment == null){
+            firstFragment = new HomeFragment();
+            fragmentManager.beginTransaction().add(R.id.fragment_container_mainActivity,firstFragment).commit();
+        }
 
-        recyclerView = (RecyclerView)findViewById(R.id.main_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(false);
-        recyclerView.setItemViewCacheSize(10);
+        /*
+        测试代码，从服务器获取Picture对象，并在RecyclerView中显示
+         */
+//        sendButton = (Button)findViewById(R.id.send_button);
+//        sendButton.setOnClickListener(this);
+//
+//        recyclerView = (RecyclerView)findViewById(R.id.main_recycler_view);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setHasFixedSize(false);
+//        recyclerView.setItemViewCacheSize(10);
 
 
 
@@ -136,9 +151,9 @@ public class MainActivity extends AppCompatActivity implements
                 Intent toLoginActivity = new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(toLoginActivity);
                 break;
-            case R.id.send_button:
-                MyAdapter myAdapter = new MyAdapter(getPic());
-                recyclerView.setAdapter(myAdapter);
+//            case R.id.send_button:
+//                MyAdapter myAdapter = new MyAdapter(getPic());
+//                recyclerView.setAdapter(myAdapter);
 
         }
 

@@ -1,4 +1,4 @@
-package com.example.farmerqi.farm;
+package com.example.farmerqi.farm.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +9,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.farmerqi.farm.R;
 import com.example.farmerqi.farm.model.User;
 
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;

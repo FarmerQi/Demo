@@ -1,4 +1,4 @@
-package com.example.farmerqi.farm;
+package com.example.farmerqi.farm.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
+import com.example.farmerqi.farm.R;
 import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
