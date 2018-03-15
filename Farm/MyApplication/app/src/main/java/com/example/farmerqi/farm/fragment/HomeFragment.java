@@ -42,9 +42,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
-
     }
 
     @Nullable
@@ -58,12 +55,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
 
         sendButton = (Button)view.findViewById(R.id.send_button_first_fragment);
         sendButton.setOnClickListener(this);
-        if (getPic()==null){
-            Toast.makeText(getContext(),"未获取到数据",Toast.LENGTH_LONG).show();
-        }else {
-            myAdapter =  new MyAdapter(getPic());
-            homePageRecyclerView.setAdapter(myAdapter);
+        while (getPic() == null){
+            getPic();
         }
+        myAdapter =  new MyAdapter(getPic());
+        homePageRecyclerView.setAdapter(myAdapter);
+
         return view;
     }
 
@@ -81,6 +78,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         @Override
                         public void onFailure(Call call, IOException e) {
                             Log.e(OKHTTP_MESSAGE,"Fail to connect!");
+                            Toast.makeText(getContext(),"连接服务器失败！",Toast.LENGTH_LONG).show();
                         }
 
                         @Override
