@@ -10,7 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,8 +23,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.example.farmerqi.farm.R;
-import com.example.farmerqi.farm.adapter.MyAdapter;
-import com.example.farmerqi.farm.fragment.HomeFragment;
+import com.example.farmerqi.farm.fragment.BuyFragment;
 import com.example.farmerqi.farm.model.Picture;
 
 
@@ -84,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment firstFragment = fragmentManager.findFragmentById(R.id.fragment_container_mainActivity);
         if (firstFragment == null){
-            firstFragment = new HomeFragment();
+            firstFragment = new BuyFragment();
             fragmentManager.beginTransaction().add(R.id.fragment_container_mainActivity,firstFragment).commit();
         }
 

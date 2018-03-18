@@ -28,12 +28,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by FarmerQi on 2018/3/13.
+ * Created by FarmerQi on 2018/3/18.
  */
 
-public class HomeFragment extends Fragment implements View.OnClickListener{
-    private static final String OKHTTP_MESSAGE = "the net state .......";
-    private RecyclerView homePageRecyclerView;
+public class SaleFragment extends Fragment implements View.OnClickListener{
+    private static final String OKHTTP_MESSAGE = "NET STATE__________";
+    private RecyclerView salePageRecyclerView;
     private List<Picture> output;
     private Button sendButton;
     private MyAdapter myAdapter;
@@ -41,31 +41,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_first,container,false);
-        homePageRecyclerView = (RecyclerView)view.findViewById(R.id.first_fragment_recyclerView);
-        homePageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        homePageRecyclerView.setHasFixedSize(false);
-        homePageRecyclerView.setItemViewCacheSize(10);
+        View view = inflater.inflate(R.layout.fragment_sale,container,false);
+        salePageRecyclerView = (RecyclerView)view.findViewById(R.id.sale_fragment_recyclerView);
+        salePageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        salePageRecyclerView.setHasFixedSize(false);
+        salePageRecyclerView.setItemViewCacheSize(10);
 
-        sendButton = (Button)view.findViewById(R.id.send_button_first_fragment);
+        sendButton = (Button)view.findViewById(R.id.send_button_sale_fragment);
         sendButton.setOnClickListener(this);
-        while (getPic() == null){
-            getPic();
-        }
-        myAdapter =  new MyAdapter(getPic());
-        homePageRecyclerView.setAdapter(myAdapter);
 
         return view;
     }
-
-
-
     public List<Picture> getPic(){
 
         new Thread(new Runnable() {
@@ -98,15 +89,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.send_button_first_fragment:
-                if (getPic()==null){
+            case R.id.send_button_sale_fragment:
+                if (getPic() == null){
                     Toast.makeText(getContext(),"未获取到数据",Toast.LENGTH_LONG).show();
                 }else {
-                    myAdapter =  new MyAdapter(getPic());
-                    homePageRecyclerView.setAdapter(myAdapter);
+                    myAdapter = new MyAdapter(getPic());
+                    salePageRecyclerView.setAdapter(myAdapter);
                 }
-
                 break;
         }
+
     }
 }
