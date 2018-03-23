@@ -10,7 +10,7 @@
         android:id="@+id/send_button_sale_fragment"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="发送"/>
+        android:text="Sale发送"/>
 
 
     <android.support.v7.widget.RecyclerView

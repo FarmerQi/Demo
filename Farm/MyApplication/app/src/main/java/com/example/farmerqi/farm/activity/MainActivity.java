@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,6 +25,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.example.farmerqi.farm.R;
 import com.example.farmerqi.farm.fragment.BuyFragment;
+import com.example.farmerqi.farm.fragment.MessageFragment;
+import com.example.farmerqi.farm.fragment.SaleFragment;
+import com.example.farmerqi.farm.fragment.SendFragment;
 import com.example.farmerqi.farm.model.Picture;
 
 
@@ -48,9 +52,21 @@ public class MainActivity extends AppCompatActivity implements
     RecyclerView recyclerView;
     RelativeLayout user;
     RelativeLayout login;
+    RelativeLayout buyFragmnetButton;
+    RelativeLayout saleFragmentButton;
+    RelativeLayout sendFragmentButton;
     Button sendButton;
     List<Picture> input;
     List<Picture> output = new ArrayList<>();
+
+    //有关Fragment
+    FragmentManager mainFragmentManager;
+    FragmentTransaction mainFragmentTransaction;
+    BuyFragment buyFragment;
+    SaleFragment saleFragment;
+    SendFragment sendFragment;
+    MessageFragment messageFragment;
+
 
 
     @Override
@@ -63,6 +79,16 @@ public class MainActivity extends AppCompatActivity implements
 
         login = (RelativeLayout) findViewById(R.id.third_button);
         login.setOnClickListener(this);
+
+        buyFragmnetButton = (RelativeLayout)findViewById(R.id.first_button);
+        buyFragmnetButton.setOnClickListener(this);
+
+        saleFragmentButton = (RelativeLayout)findViewById(R.id.second_button);
+        saleFragmentButton.setOnClickListener(this);
+
+        sendFragmentButton = (RelativeLayout)findViewById(R.id.fifth_button);
+        sendFragmentButton.setOnClickListener(this);
+
 
         Toolbar mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -79,26 +105,23 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
         userImage.setOnClickListener(this);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment firstFragment = fragmentManager.findFragmentById(R.id.fragment_container_mainActivity);
-        if (firstFragment == null){
-            firstFragment = new BuyFragment();
-            fragmentManager.beginTransaction().add(R.id.fragment_container_mainActivity,firstFragment).commit();
-        }
+        mainFragmentManager = getSupportFragmentManager();
+        showFragment(1);
+//        Fragment firstFragment = mainFragmentManager.findFragmentById(R.id.fragment_container_mainActivity);
+//        if (firstFragment == null){
+//            firstFragment = new BuyFragment();
+//            mainFragmentManager.beginTransaction().add(R.id.fragment_container_mainActivity,firstFragment).commit();
+//        }
 
         /*
         测试代码，从服务器获取Picture对象，并在RecyclerView中显示
          */
 //        sendButton = (Button)findViewById(R.id.send_button);
 //        sendButton.setOnClickListener(this);
-//
 //        recyclerView = (RecyclerView)findViewById(R.id.main_recycler_view);
 //        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        recyclerView.setHasFixedSize(false);
 //        recyclerView.setItemViewCacheSize(10);
-
-
-
 
     }
 
@@ -132,26 +155,107 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
+    //配置显示Fragment
+    public void showFragment(int index){
+        mainFragmentTransaction = mainFragmentManager.beginTransaction();
+        hideFragment(mainFragmentTransaction);
+        switch (index){
+
+            case 1:
+                if (buyFragment != null){
+                    mainFragmentTransaction.show(buyFragment);
+                }else {
+                    buyFragment = new BuyFragment();
+                    mainFragmentTransaction.add(R.id.fragment_container_mainActivity,buyFragment);
+
+                }
+                break;
+
+            case 2:
+
+                if (saleFragment != null){
+                    mainFragmentTransaction.show(saleFragment);
+                }else {
+                    saleFragment = new SaleFragment();
+                    mainFragmentTransaction.add(R.id.fragment_container_mainActivity,saleFragment);
+                }
+                break;
+
+            case 3:
+                if (sendFragment != null){
+                    mainFragmentTransaction.show(sendFragment);
+                }else {
+                    sendFragment = new SendFragment();
+                    mainFragmentTransaction.add(R.id.fragment_container_mainActivity,sendFragment);
+                }
+
+                break;
+
+            case 4:
+                if (messageFragment != null){
+                    mainFragmentTransaction.show(messageFragment);
+                }else {
+                    messageFragment = new MessageFragment();
+                    mainFragmentTransaction.add(R.id.fragment_container_mainActivity,messageFragment);
+                }
+                break;
+
+        }
+        mainFragmentTransaction.commit();
+    }
+
+    //隐藏Fragment
+    public void hideFragment(FragmentTransaction fragmentTransaction){
+        if (buyFragment != null){
+            fragmentTransaction.hide(buyFragment);
+        }
+        if (saleFragment != null){
+            fragmentTransaction.hide(saleFragment);
+        }
+        if (sendFragment != null){
+            fragmentTransaction.hide(sendFragment);
+        }
+        if (messageFragment != null){
+            fragmentTransaction.hide(messageFragment);
+        }
+    }
+
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.nav_user_image:
-                Toast.makeText(this,"hi,FarmerQi",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"hi,FarmerQi",Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.fourth_button:
-                Toast.makeText(this,"打开第二个活动",Toast.LENGTH_LONG).show();
-                Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
-                startActivity(toSecondActivity);
+
+            case R.id.first_button:
+                Toast.makeText(this,"打开BuyFragment",Toast.LENGTH_SHORT).show();
+                showFragment(1);
                 break;
+
+            case R.id.second_button:
+                Toast.makeText(this,"打开SaleFragment",Toast.LENGTH_SHORT).show();
+                showFragment(2);
+                break;
+
             case R.id.third_button:
-                Toast.makeText(this,"打开登录界面",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"打开sendFragment",Toast.LENGTH_SHORT);
+                showFragment(3);
+                break;
+
+            case R.id.fourth_button:
+                Toast.makeText(this,"打开messageFragment",Toast.LENGTH_SHORT);
+                showFragment(4);
+//                Toast.makeText(this,"打开第二个活动",Toast.LENGTH_SHORT).show();
+//                Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
+//                startActivity(toSecondActivity);
+                break;
+
+            case R.id.fifth_button:
+                Toast.makeText(this,"打开登录界面",Toast.LENGTH_SHORT).show();
                 Intent toLoginActivity = new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(toLoginActivity);
                 break;
-//            case R.id.send_button:
-//                MyAdapter myAdapter = new MyAdapter(getPic());
-//                recyclerView.setAdapter(myAdapter);
 
         }
 

@@ -8,7 +8,7 @@
         android:id="@+id/send_button_buy_fragment"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:text="发送"/>
+        android:text="Buy发送"/>
 
 
     <android.support.v7.widget.RecyclerView

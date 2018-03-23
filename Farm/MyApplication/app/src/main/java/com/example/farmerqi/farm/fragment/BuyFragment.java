@@ -47,7 +47,7 @@ public class BuyFragment extends Fragment implements View.OnClickListener{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_first,container,false);
+        View view = inflater.inflate(R.layout.fragment_buy,container,false);
         buyPageRecyclerView = (RecyclerView)view.findViewById(R.id.buy_fragment_recyclerView);
         buyPageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         buyPageRecyclerView.setHasFixedSize(false);
@@ -100,7 +100,6 @@ public class BuyFragment extends Fragment implements View.OnClickListener{
                     myAdapter =  new MyAdapter(getPic());
                     buyPageRecyclerView.setAdapter(myAdapter);
                 }
-
                 break;
         }
     }
