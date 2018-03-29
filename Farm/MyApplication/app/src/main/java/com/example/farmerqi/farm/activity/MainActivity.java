@@ -1,10 +1,10 @@
 package com.example.farmerqi.farm.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -14,10 +14,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -27,8 +33,9 @@ import com.example.farmerqi.farm.R;
 import com.example.farmerqi.farm.fragment.BuyFragment;
 import com.example.farmerqi.farm.fragment.MessageFragment;
 import com.example.farmerqi.farm.fragment.SaleFragment;
-import com.example.farmerqi.farm.fragment.SendFragment;
+import com.example.farmerqi.farm.fragment.ReleaseFragment;
 import com.example.farmerqi.farm.model.Picture;
+import com.example.zhouwei.library.CustomPopWindow;
 
 
 import java.io.IOException;
@@ -48,10 +55,11 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,View.OnClickListener{
     private static final String OKHTTP_MESSAGE = "FROM SERVER:---------";
+    private static final String MESSAGE_SIE = "SIZE ____";
     ImageView userImage;
     RecyclerView recyclerView;
     RelativeLayout user;
-    RelativeLayout login;
+    RelativeLayout releaseButton;
     RelativeLayout buyFragmnetButton;
     RelativeLayout saleFragmentButton;
     RelativeLayout sendFragmentButton;
@@ -64,8 +72,18 @@ public class MainActivity extends AppCompatActivity implements
     FragmentTransaction mainFragmentTransaction;
     BuyFragment buyFragment;
     SaleFragment saleFragment;
-    SendFragment sendFragment;
+    ReleaseFragment releaseFragment;
     MessageFragment messageFragment;
+
+
+    CustomPopWindow customPopWindow;
+    PopupWindow popupWindow;
+
+    Toolbar mToolbar;
+
+
+    LinearLayout popupWindowLinearLayout;
+    int popWindowHeight;
 
 
 
@@ -74,11 +92,13 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_nav_main);
 
+
+
         user = (RelativeLayout) findViewById(R.id.fourth_button);
         user.setOnClickListener(this);
 
-        login = (RelativeLayout) findViewById(R.id.third_button);
-        login.setOnClickListener(this);
+        releaseButton = (RelativeLayout) findViewById(R.id.third_button);
+        releaseButton.setOnClickListener(this);
 
         buyFragmnetButton = (RelativeLayout)findViewById(R.id.first_button);
         buyFragmnetButton.setOnClickListener(this);
@@ -90,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements
         sendFragmentButton.setOnClickListener(this);
 
 
-        Toolbar mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
         DrawerLayout mDrawerLayout = (DrawerLayout)findViewById(R.id.nav_drawer_layout);
@@ -107,21 +127,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mainFragmentManager = getSupportFragmentManager();
         showFragment(1);
-//        Fragment firstFragment = mainFragmentManager.findFragmentById(R.id.fragment_container_mainActivity);
-//        if (firstFragment == null){
-//            firstFragment = new BuyFragment();
-//            mainFragmentManager.beginTransaction().add(R.id.fragment_container_mainActivity,firstFragment).commit();
-//        }
 
-        /*
-        测试代码，从服务器获取Picture对象，并在RecyclerView中显示
-         */
-//        sendButton = (Button)findViewById(R.id.send_button);
-//        sendButton.setOnClickListener(this);
-//        recyclerView = (RecyclerView)findViewById(R.id.main_recycler_view);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setHasFixedSize(false);
-//        recyclerView.setItemViewCacheSize(10);
 
     }
 
@@ -181,15 +187,15 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
 
-            case 3:
-                if (sendFragment != null){
-                    mainFragmentTransaction.show(sendFragment);
-                }else {
-                    sendFragment = new SendFragment();
-                    mainFragmentTransaction.add(R.id.fragment_container_mainActivity,sendFragment);
-                }
-
-                break;
+//            case 3:
+//                if (releaseFragment != null){
+//                    mainFragmentTransaction.show(releaseFragment);
+//                }else {
+//                    releaseFragment = new ReleaseFragment();
+//                    mainFragmentTransaction.add(R.id.fragment_container_mainActivity, releaseFragment);
+//                }
+//
+//                break;
 
             case 4:
                 if (messageFragment != null){
@@ -212,9 +218,9 @@ public class MainActivity extends AppCompatActivity implements
         if (saleFragment != null){
             fragmentTransaction.hide(saleFragment);
         }
-        if (sendFragment != null){
-            fragmentTransaction.hide(sendFragment);
-        }
+//        if (releaseFragment != null){
+//            fragmentTransaction.hide(releaseFragment);
+//        }
         if (messageFragment != null){
             fragmentTransaction.hide(messageFragment);
         }
@@ -224,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            //导航栏的点击事件
             case R.id.nav_user_image:
                 Toast.makeText(this,"hi,FarmerQi",Toast.LENGTH_SHORT).show();
                 break;
@@ -237,14 +244,13 @@ public class MainActivity extends AppCompatActivity implements
                 Toast.makeText(this,"打开SaleFragment",Toast.LENGTH_SHORT).show();
                 showFragment(2);
                 break;
-
+            //POPUP WINDOW的点击事件
             case R.id.third_button:
-                Toast.makeText(this,"打开sendFragment",Toast.LENGTH_SHORT);
-                showFragment(3);
+                showPopupWindow();
                 break;
 
             case R.id.fourth_button:
-                Toast.makeText(this,"打开messageFragment",Toast.LENGTH_SHORT);
+                Toast.makeText(this,"打开messageFragment",Toast.LENGTH_SHORT).show();
                 showFragment(4);
 //                Toast.makeText(this,"打开第二个活动",Toast.LENGTH_SHORT).show();
 //                Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
@@ -259,6 +265,55 @@ public class MainActivity extends AppCompatActivity implements
 
         }
 
+    }
+
+    //展示PopupWindow
+    private void showPopupWindow(){
+        View contentView = LayoutInflater.from(this).inflate(R.layout.cardview_popup,null);
+        contentView.measure(0,0);
+        //处理popup window弹出的位置。通过组件的getLocationOnScreen方法获取基准组件的位置，之后需要调用
+        //view的measure方法获取需要弹出的组件的具体高度和宽度。在根据自己的需求去安放组件
+        //参考网址：
+        //https://blog.csdn.net/cjllife/article/details/8146185/
+        popupWindow = new PopupWindow(this);
+
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+        //popup window 自身问题会导致背景出现黑边，设置背景后可解决
+        popupWindow.setBackgroundDrawable(null);
+
+        popupWindow.setFocusable(true);
+        popupWindow.setContentView(contentView);
+        int[] location = new int[2];
+        releaseButton.getLocationOnScreen(location);
+        popupWindow.showAtLocation(releaseButton,Gravity.NO_GRAVITY,location[0],location[1] - contentView.getMeasuredHeight() -20);
+
+        //设置弹出后背景透明度
+        backgroundAlpha(0.7f);
+        popupWindow.setOnDismissListener(new poponDismissListenner());
+        Log.e(MESSAGE_SIE,contentView.getMeasuredHeight() + "");
+        Log.e(MESSAGE_SIE,location[0] + "");
+        Log.e(MESSAGE_SIE,location[1] + "");
+        Log.e(MESSAGE_SIE,releaseButton.getHeight() + "");
+        Log.e(MESSAGE_SIE,popupWindow.getHeight() + "");
+
+
+    }
+
+    //在popupWindow消失后处理背景透明度的方法
+    class poponDismissListenner implements PopupWindow.OnDismissListener{
+
+        @Override
+        public void onDismiss() {
+            backgroundAlpha(1f);
+        }
+    }
+    //设置popupWindow显示后的背景透明度
+    //浮点值，从0.0 - 1.0
+    public void backgroundAlpha(float bgAlpha){
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        layoutParams.alpha = bgAlpha;
+        getWindow().setAttributes(layoutParams);
     }
 
     //获取返回的json数据
@@ -291,3 +346,5 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 }
+
+
