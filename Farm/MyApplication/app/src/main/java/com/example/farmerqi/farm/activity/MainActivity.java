@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -33,9 +34,9 @@ import com.example.farmerqi.farm.R;
 import com.example.farmerqi.farm.fragment.BuyFragment;
 import com.example.farmerqi.farm.fragment.MessageFragment;
 import com.example.farmerqi.farm.fragment.SaleFragment;
-import com.example.farmerqi.farm.fragment.ReleaseFragment;
+
 import com.example.farmerqi.farm.model.Picture;
-import com.example.zhouwei.library.CustomPopWindow;
+
 
 
 import java.io.IOException;
@@ -72,18 +73,18 @@ public class MainActivity extends AppCompatActivity implements
     FragmentTransaction mainFragmentTransaction;
     BuyFragment buyFragment;
     SaleFragment saleFragment;
-    ReleaseFragment releaseFragment;
     MessageFragment messageFragment;
 
 
-    CustomPopWindow customPopWindow;
+    //popupWindow窗口
     PopupWindow popupWindow;
+
+    //popupWindow的两个图标
+    LinearLayout saleButton;
+    LinearLayout buyButton;
 
     Toolbar mToolbar;
 
-
-    LinearLayout popupWindowLinearLayout;
-    int popWindowHeight;
 
 
 
@@ -97,18 +98,21 @@ public class MainActivity extends AppCompatActivity implements
         user = (RelativeLayout) findViewById(R.id.fourth_button);
         user.setOnClickListener(this);
 
+        //发布按钮
         releaseButton = (RelativeLayout) findViewById(R.id.third_button);
         releaseButton.setOnClickListener(this);
 
+        //供应界面按钮
         buyFragmnetButton = (RelativeLayout)findViewById(R.id.first_button);
         buyFragmnetButton.setOnClickListener(this);
 
+        //需求界面按钮
         saleFragmentButton = (RelativeLayout)findViewById(R.id.second_button);
         saleFragmentButton.setOnClickListener(this);
 
+        //不知道该叫啥的按钮
         sendFragmentButton = (RelativeLayout)findViewById(R.id.fifth_button);
         sendFragmentButton.setOnClickListener(this);
-
 
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -187,16 +191,6 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
 
-//            case 3:
-//                if (releaseFragment != null){
-//                    mainFragmentTransaction.show(releaseFragment);
-//                }else {
-//                    releaseFragment = new ReleaseFragment();
-//                    mainFragmentTransaction.add(R.id.fragment_container_mainActivity, releaseFragment);
-//                }
-//
-//                break;
-
             case 4:
                 if (messageFragment != null){
                     mainFragmentTransaction.show(messageFragment);
@@ -247,14 +241,12 @@ public class MainActivity extends AppCompatActivity implements
             //POPUP WINDOW的点击事件
             case R.id.third_button:
                 showPopupWindow();
+
                 break;
 
             case R.id.fourth_button:
                 Toast.makeText(this,"打开messageFragment",Toast.LENGTH_SHORT).show();
                 showFragment(4);
-//                Toast.makeText(this,"打开第二个活动",Toast.LENGTH_SHORT).show();
-//                Intent toSecondActivity = new Intent(MainActivity.this,SecondActivity.class);
-//                startActivity(toSecondActivity);
                 break;
 
             case R.id.fifth_button:
@@ -263,13 +255,36 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(toLoginActivity);
                 break;
 
+            case R.id.popup_buy_linear_layout:
+                Toast.makeText(this,"这是卖东西的按钮",Toast.LENGTH_SHORT).show();
+                popupWindow.dismiss();
+                break;
+
+            case R.id.popup_sale_linear_layout:
+                Toast.makeText(this,"这是卖东西按钮",Toast.LENGTH_SHORT).show();
+                popupWindow.dismiss();
+                break;
+
         }
 
     }
 
     //展示PopupWindow
     private void showPopupWindow(){
+
         View contentView = LayoutInflater.from(this).inflate(R.layout.cardview_popup,null);
+        /*由于加载Activity时，初始化只涉及到当前布局的界面，因此无法获取popupWindow内部的View，
+        因此在onCreate方法中初始化这两个控件时，会导致空指针错误。正确做法是在初始化popupWindow时，由popupWindow
+        的界面来获取具体的View实例并进行初始化
+        */
+        //popupWindow的购买按钮
+        buyButton = (LinearLayout)contentView.findViewById(R.id.popup_buy_linear_layout);
+        buyButton.setOnClickListener(this);
+
+        //popupWindow的卖东西按钮
+        saleButton = (LinearLayout)contentView.findViewById(R.id.popup_sale_linear_layout);
+        saleButton.setOnClickListener(this);
+
         contentView.measure(0,0);
         //处理popup window弹出的位置。通过组件的getLocationOnScreen方法获取基准组件的位置，之后需要调用
         //view的measure方法获取需要弹出的组件的具体高度和宽度。在根据自己的需求去安放组件
@@ -279,11 +294,16 @@ public class MainActivity extends AppCompatActivity implements
 
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
         popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+
         //popup window 自身问题会导致背景出现黑边，设置背景后可解决
         popupWindow.setBackgroundDrawable(null);
 
         popupWindow.setFocusable(true);
         popupWindow.setContentView(contentView);
+
+
+        //为popupWindow设置入场和出场动画
+        popupWindow.setAnimationStyle(R.style.anim_popup_widow);
         int[] location = new int[2];
         releaseButton.getLocationOnScreen(location);
         popupWindow.showAtLocation(releaseButton,Gravity.NO_GRAVITY,location[0],location[1] - contentView.getMeasuredHeight() -20);
