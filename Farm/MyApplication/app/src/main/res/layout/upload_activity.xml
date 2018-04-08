@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:id="@+id/test"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:text="选择图片"/>
+    <EditText
+        android:id="@+id/introduce_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:hint="有关商品介绍..."
+        android:gravity="top"/>
+    <GridView
+        android:id="@+id/image_grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:horizontalSpacing="10dp"
+        android:verticalSpacing="10dp"
+        android:numColumns="4"></GridView>
+
+</LinearLayout>

@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Base"
         >
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.UpLoadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"></action>
                 <category android:name="android.intent.category.LAUNCHER"></category>
@@ -24,6 +24,9 @@
 
         </activity>
         <activity android:name=".activity.PicturePickerActivity">
+
+        </activity>
+        <activity android:name=".activity.MainActivity">
 
         </activity>
         <provider
