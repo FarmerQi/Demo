@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.farmerqi.farm">
 
 
@@ -17,9 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER"></category>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SecondActivity">
 
-        </activity>
         <activity android:name=".activity.LoginActivity">
 
         </activity>
@@ -33,10 +32,12 @@
             android:authorities="com.example.farmerqi.farm.fileProvider"
             android:name="android.support.v4.content.FileProvider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            tools:replace="name,authorities,exported,grantUriPermissions">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/files">
+                android:resource="@xml/files"
+                tools:replace="name,resource">
             </meta-data>
         </provider>
 

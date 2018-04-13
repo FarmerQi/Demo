@@ -108,6 +108,7 @@ public class UriToPathUtil {
     public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
         Cursor cursor = null;
         String column = null;
+        //由于Matisse拍照后的照片默认存储在sdcard上，因此需要获取到sdcard的路径后再获取图片
         if ("com.example.farmerqi.farm.fileProvider".equals(uri.getAuthority())){
             //获取sdcard上的图片
             return Environment.getExternalStorageDirectory() + File.separator + uri.getLastPathSegment();

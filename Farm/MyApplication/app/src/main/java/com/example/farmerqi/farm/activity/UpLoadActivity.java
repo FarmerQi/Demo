@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -105,6 +106,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position == parent.getCount() - 1){
+
                     UpLoadActivityPermissionsDispatcher.getPicWithPermissionCheck(UpLoadActivity.this);
                 }else {
                     Toast.makeText(UpLoadActivity.this,"这是第 " + position + "张图片",Toast.LENGTH_SHORT).show();
@@ -130,6 +132,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
 
     @NeedsPermission({Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.CAMERA})
     public void getPic(){
+
         Matisse.from(this)
                 .choose(MimeType.allOf())
                 .countable(true)
@@ -138,6 +141,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
                 .maxSelectable(20)
                 .imageEngine(new GlideEngine())
                 .forResult(REQUEST_CODE_CHOOSE);
+
     }
 
     @Override
@@ -159,12 +163,28 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e("uri data",list.get(i).getLastPathSegment());
                 Log.e("uri data",list.get(i).getEncodedPath());
                 Log.e("SDCARDpATH", Environment.getExternalStorageDirectory().toString());
+
+                /**
+                 * 此处处理在获取到相机拍摄的照片后，将获取的照片添加到手机媒体文件的数据库中
+                 * 此步骤十分关键，如果不进行此步骤的处理，会导致无法获取已经拍摄的照片*/
+                if ("com.example.farmerqi.farm.fileProvider".equals(list.get(i).getAuthority())){
+                    String[] paths = {Environment.getExternalStorageDirectory().toString() + File.separator + list.get(i).getLastPathSegment()} ;
+                    String[] mimeTypes = {MimeType.JPEG.toString(),MimeType.PNG.toString(),MimeType.GIF.toString()};
+                    MediaScannerConnection.scanFile(UpLoadActivity.this, paths, mimeTypes, new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+
+                        }
+                    });
+                }
+
                 //Log.e("Uri documentId",DocumentsContract.getDocumentId(list.get(i)));
             }
 //            gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,list);
 //            uploadGridView.setAdapter(gridViewAdapter);
 //            gridViewAdapter.notifyDataSetChanged();
             compressPics(list);
+
 
         }
     }
