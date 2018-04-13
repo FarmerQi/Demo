@@ -17,5 +17,5 @@
 <!--代表app 外部存储区域根目录下的文件 Context.getExternalCacheDir目录下的images目录-->
 <external-cache-path name="mq_external_cache" path="/images" />
 
-<root-path name="mq_external_cache" path="" />
+<root-path name="mq_external_caches" path="" />
 </paths>

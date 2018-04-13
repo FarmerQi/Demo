@@ -2,15 +2,20 @@ package com.example.farmerqi.farm.activity;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.farmerqi.farm.R;
 import com.example.farmerqi.farm.adapter.GridViewAdapter;
+import com.example.farmerqi.farm.utils.UriToPathUtil;
 import com.facebook.common.internal.Files;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -114,7 +120,8 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()){
             case R.id.test:
                 for (int i = 0; i < compressedPhotos.size(); i++) {
-                    sendPic(uriToFile(compressedPhotos.get(i)));
+                    Uri result = compressedPhotos.get(i);
+                    sendPic(new File(UriToPathUtil.getRealFilePath(UpLoadActivity.this,result)));
                     Log.e("路径是.........",compressedPhotos.get(i).toString());
                 }
                 break;
@@ -144,6 +151,19 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK){
             list = Matisse.obtainResult(data);
+            for (int i = 0; i < list.size(); i++) {
+                Log.e("Uri from camera",list.get(i).toString());
+                Log.e("Uri path",list.get(i).getPath());
+                Log.e("uri authority",list.get(i).getAuthority());
+                Log.e("uri scheme",list.get(i).getScheme());
+                Log.e("uri data",list.get(i).getLastPathSegment());
+                Log.e("uri data",list.get(i).getEncodedPath());
+                Log.e("SDCARDpATH", Environment.getExternalStorageDirectory().toString());
+                //Log.e("Uri documentId",DocumentsContract.getDocumentId(list.get(i)));
+            }
+//            gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,list);
+//            uploadGridView.setAdapter(gridViewAdapter);
+//            gridViewAdapter.notifyDataSetChanged();
             compressPics(list);
 
         }
@@ -163,7 +183,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 Luban.with(UpLoadActivity.this)
-                        .load(uriToFile(uri))
+                        .load(UriToPathUtil.getRealFilePath(UpLoadActivity.this,uri))
                         .setCompressListener(new OnCompressListener() {
                             @Override
                             public void onStart() {
@@ -206,28 +226,12 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
 //        for (int i = 0; i < resultList.size(); i++) {
 //            Log.e("Uri....","" + resultList.get(i).toString());
 //        }
-        Log.e("执行结果","" + resultList.size());
+        //Log.e("执行结果","" + resultList.size());
         return resultList;
     }
 
+
     //将URI转换为File
-    private File uriToFile(Uri uri) {
-        String img_path;
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor actualimagecursor = getContentResolver().query(uri, proj, null,
-                null, null);
-        if (actualimagecursor == null) {
-            img_path = uri.getPath();
-        } else {
-            int actual_image_column_index = actualimagecursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            actualimagecursor.moveToFirst();
-            img_path = actualimagecursor
-                    .getString(actual_image_column_index);
-        }
-        File file = new File(img_path);
-        return file;
-    }
 
 
     /**
@@ -261,49 +265,5 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
         }).start();
     }
 
-//    private static String getFromMediaUri(Context context, ContentResolver resolver, Uri uri) {
-//        if (uri == null) return null;
-//
-//        FileInputStream input = null;
-//        FileOutputStream output = null;
-//        try {
-//            ParcelFileDescriptor pfd = resolver.openFileDescriptor(uri, "r");
-//            if (pfd == null) {
-//                return null;
-//            }
-//            FileDescriptor fd = pfd.getFileDescriptor();
-//            input = new FileInputStream(fd);
-//
-//            String tempFilename = getTempFilename(context);
-//            output = new FileOutputStream(tempFilename);
-//
-//            int read;
-//            byte[] bytes = new byte[4096];
-//            while ((read = input.read(bytes)) != -1) {
-//                output.write(bytes, 0, read);
-//            }
-//
-//            return new File(tempFilename).getAbsolutePath();
-//        } catch (Exception ignored) {
-//
-//            ignored.getStackTrace();
-//        } finally {
-//            closeSilently(input);
-//            closeSilently(output);
-//        }
-//        return null;
-//    }
-//    private static String getTempFilename(Context context) throws IOException {
-//        File outputDir = context.getCacheDir();
-//        File outputFile = File.createTempFile("image", "tmp", outputDir);
-//        return outputFile.getAbsolutePath();
-//    }
-//    public static void closeSilently(@Nullable Closeable c) {
-//        if (c == null) return;
-//        try {
-//            c.close();
-//        } catch (Throwable t) {
-//            // Do nothing
-//        }
-//    }
+
 }
