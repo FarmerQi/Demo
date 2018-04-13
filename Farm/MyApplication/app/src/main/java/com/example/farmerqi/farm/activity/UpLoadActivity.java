@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.farmerqi.farm.R;
@@ -80,6 +81,8 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
     private List<Uri> list;
     private List<Uri> compressedPhotos;
 
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +91,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
         uploadGridView = (GridView)findViewById(R.id.image_grid_view);
         selectButton = (Button)findViewById(R.id.test);
         selectButton.setOnClickListener(this);
+
 
         /**获取Drawable目录下的图片的URI的方法*/
 //        list = new ArrayList<>();
@@ -105,14 +109,54 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
         uploadGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ImageView contentImage = (ImageView)view.findViewById(R.id.grid_view_item_image_content);
+                ImageView deleteImage = (ImageView)view.findViewById(R.id.grid_view_item_image_delete);
+                final int itemPosition = position;
                 if (position == parent.getCount() - 1){
 
                     UpLoadActivityPermissionsDispatcher.getPicWithPermissionCheck(UpLoadActivity.this);
                 }else {
-                    Toast.makeText(UpLoadActivity.this,"这是第 " + position + "张图片",Toast.LENGTH_SHORT).show();
+                    contentImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(UpLoadActivity.this,"这是大图片",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    deleteImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(UpLoadActivity.this,"这是小图片",Toast.LENGTH_SHORT).show();
+                            compressedPhotos.remove(itemPosition);
+                            List<Uri> temp = new ArrayList<>();
+                            temp.addAll(compressedPhotos);
+                            compressedPhotos.clear();
+                            compressedPhotos.addAll(temp);
+                            gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,compressedPhotos);
+                            uploadGridView.setAdapter(gridViewAdapter);
+                            gridViewAdapter.notifyDataSetChanged();
+                        }
+                    });
+//                    switch (view.getId()){
+//                        case R.id.grid_view_item_image_content:
+//                            Toast.makeText(UpLoadActivity.this,"这是大图片",Toast.LENGTH_SHORT).show();
+//                            break;
+//                        case R.id.grid_view_item_image_delete:
+//                            Toast.makeText(UpLoadActivity.this,"这是小图片",Toast.LENGTH_SHORT).show();
+//                            compressedPhotos.remove(position);
+//                            List<Uri> temp = new ArrayList<>();
+//                            temp.addAll(compressedPhotos);
+//                            compressedPhotos.clear();
+//                            compressedPhotos.addAll(temp);
+//                            gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,compressedPhotos);
+//                            uploadGridView.setAdapter(gridViewAdapter);
+//                            gridViewAdapter.notifyDataSetChanged();
+//                            break;
+//                    }
+                    //Toast.makeText(UpLoadActivity.this,"这是第 " + position + "张图片",Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
 
     }
 
@@ -135,7 +179,6 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
 
         Matisse.from(this)
                 .choose(MimeType.allOf())
-                .countable(true)
                 .capture(true)
                 .captureStrategy(new CaptureStrategy(true,"com.example.farmerqi.farm.fileProvider"))
                 .maxSelectable(20)
@@ -222,10 +265,11 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
                                     Runnable runnable = taskList.pop();
                                     handler.post(runnable);
                                 }else {
-                                    gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,resultList);
+                                    compressedPhotos = resultList;
+                                    gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,compressedPhotos);
                                     uploadGridView.setAdapter(gridViewAdapter);
                                     gridViewAdapter.notifyDataSetChanged();
-                                    compressedPhotos = resultList;
+
                                 }
                             }
 

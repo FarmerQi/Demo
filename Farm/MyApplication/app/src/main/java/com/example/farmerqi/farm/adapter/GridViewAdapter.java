@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.farmerqi.farm.R;
 import com.squareup.picasso.Picasso;
@@ -18,10 +19,10 @@ import java.util.List;
  * Created by FarmerQi on 2018/4/8.
  */
 
-public class GridViewAdapter extends BaseAdapter {
+public class GridViewAdapter extends BaseAdapter{
     List<Uri> input;
     ImageView imageView;
-    TextView textView;
+    ImageView deleteIamgeView;
     LayoutInflater layoutInflater;
     Context context;
 
@@ -30,6 +31,7 @@ public class GridViewAdapter extends BaseAdapter {
         this.input = input;
         layoutInflater = LayoutInflater.from(context);
     }
+
 
     @Override
     public int getCount() {
@@ -53,21 +55,28 @@ public class GridViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         convertView = layoutInflater.inflate(R.layout.upload_gridview_item,null);
-        imageView = (ImageView)convertView.findViewById(R.id.grid_view_item_image);
+        imageView = (ImageView)convertView.findViewById(R.id.grid_view_item_image_content);
+        deleteIamgeView = (ImageView)convertView.findViewById(R.id.grid_view_item_image_delete);
         //处理初始化的问题，在LIST为空的情况下需要针对特殊情况进行处理
         if (input == null){
             imageView.setBackgroundResource(R.drawable.add);
+
+            deleteIamgeView.setVisibility(View.GONE);
         }else if (position < input.size()){
             Picasso.get().load(input.get(position)).into(imageView);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        }else {
 
+        }else {
+            deleteIamgeView.setVisibility(View.GONE);
             imageView.setBackgroundResource(R.drawable.add);
             imageView.setScaleType(ImageView.ScaleType.CENTER);
-
         }
+
         return convertView;
     }
+
+
 }
