@@ -5,18 +5,18 @@
 
         <ImageView
             android:id="@+id/grid_view_item_image_content"
-            android:layout_width="105dp"
-            android:layout_height="105dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
             android:layout_gravity="center"
             android:layout_alignParentRight="true"
 
             />
         <ImageView
             android:id="@+id/grid_view_item_image_delete"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentRight="true"
             android:src="@drawable/delete"/>
 

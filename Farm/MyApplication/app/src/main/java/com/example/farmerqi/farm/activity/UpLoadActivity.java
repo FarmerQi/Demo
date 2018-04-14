@@ -79,7 +79,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
     private GridViewAdapter gridViewAdapter;
     private Button selectButton;
     private List<Uri> list;
-    private List<Uri> compressedPhotos;
+    private List<Uri> compressedPhotos = new ArrayList<>();
 
 
 
@@ -109,50 +109,11 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
         uploadGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ImageView contentImage = (ImageView)view.findViewById(R.id.grid_view_item_image_content);
-                ImageView deleteImage = (ImageView)view.findViewById(R.id.grid_view_item_image_delete);
                 final int itemPosition = position;
                 if (position == parent.getCount() - 1){
-
                     UpLoadActivityPermissionsDispatcher.getPicWithPermissionCheck(UpLoadActivity.this);
                 }else {
-                    contentImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(UpLoadActivity.this,"这是大图片",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    deleteImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Toast.makeText(UpLoadActivity.this,"这是小图片",Toast.LENGTH_SHORT).show();
-                            compressedPhotos.remove(itemPosition);
-                            List<Uri> temp = new ArrayList<>();
-                            temp.addAll(compressedPhotos);
-                            compressedPhotos.clear();
-                            compressedPhotos.addAll(temp);
-                            gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,compressedPhotos);
-                            uploadGridView.setAdapter(gridViewAdapter);
-                            gridViewAdapter.notifyDataSetChanged();
-                        }
-                    });
-//                    switch (view.getId()){
-//                        case R.id.grid_view_item_image_content:
-//                            Toast.makeText(UpLoadActivity.this,"这是大图片",Toast.LENGTH_SHORT).show();
-//                            break;
-//                        case R.id.grid_view_item_image_delete:
-//                            Toast.makeText(UpLoadActivity.this,"这是小图片",Toast.LENGTH_SHORT).show();
-//                            compressedPhotos.remove(position);
-//                            List<Uri> temp = new ArrayList<>();
-//                            temp.addAll(compressedPhotos);
-//                            compressedPhotos.clear();
-//                            compressedPhotos.addAll(temp);
-//                            gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,compressedPhotos);
-//                            uploadGridView.setAdapter(gridViewAdapter);
-//                            gridViewAdapter.notifyDataSetChanged();
-//                            break;
-//                    }
-                    //Toast.makeText(UpLoadActivity.this,"这是第 " + position + "张图片",Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
@@ -265,11 +226,15 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
                                     Runnable runnable = taskList.pop();
                                     handler.post(runnable);
                                 }else {
-                                    compressedPhotos = resultList;
+                                    if (compressedPhotos.isEmpty()){
+                                        compressedPhotos = resultList;
+                                    }else {
+                                        compressedPhotos.addAll(resultList);
+                                    }
+
                                     gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,compressedPhotos);
                                     uploadGridView.setAdapter(gridViewAdapter);
                                     gridViewAdapter.notifyDataSetChanged();
-
                                 }
                             }
 

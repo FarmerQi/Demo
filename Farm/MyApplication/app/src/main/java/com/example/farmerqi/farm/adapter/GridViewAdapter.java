@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.example.farmerqi.farm.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,19 +57,36 @@ public class GridViewAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        final int temPosition = position;
         convertView = layoutInflater.inflate(R.layout.upload_gridview_item,null);
         imageView = (ImageView)convertView.findViewById(R.id.grid_view_item_image_content);
         deleteIamgeView = (ImageView)convertView.findViewById(R.id.grid_view_item_image_delete);
+        final View tempView = convertView;
         //处理初始化的问题，在LIST为空的情况下需要针对特殊情况进行处理
         if (input == null){
             imageView.setBackgroundResource(R.drawable.add);
-
             deleteIamgeView.setVisibility(View.GONE);
         }else if (position < input.size()){
             Picasso.get().load(input.get(position)).into(imageView);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(tempView.getContext(),"这是第" + temPosition + "个大图",Toast.LENGTH_SHORT).show();
+                }
+            });
+            deleteIamgeView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //实现删除item，同时刷新
+                    input.remove(temPosition);
+                    List<Uri> temp = new ArrayList<>();
+                    temp.addAll(input);
+                    input.clear();
+                    input.addAll(temp);
+                    notifyDataSetChanged();
+                }
+            });
 
         }else {
             deleteIamgeView.setVisibility(View.GONE);
@@ -77,6 +96,9 @@ public class GridViewAdapter extends BaseAdapter{
 
         return convertView;
     }
+
+
+
 
 
 }
