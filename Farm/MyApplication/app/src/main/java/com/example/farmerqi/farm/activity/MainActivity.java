@@ -256,11 +256,15 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.popup_buy_linear_layout:
+                Intent toBuyUploadActivity = new Intent(MainActivity.this,UpLoadActivity.class);
+                startActivity(toBuyUploadActivity);
                 Toast.makeText(this,"这是卖东西的按钮",Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
                 break;
 
             case R.id.popup_sale_linear_layout:
+                Intent toSaleUploadActivity = new Intent(MainActivity.this,UpLoadActivity.class);
+                startActivity(toSaleUploadActivity);
                 Toast.makeText(this,"这是卖东西按钮",Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
                 break;
