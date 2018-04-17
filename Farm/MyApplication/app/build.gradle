@@ -1,9 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'Key0'
+            keyPassword 'qnmlgb951025'
+            storeFile file('D:/SHA1/farmerqi.jks')
+            storePassword 'qnmlgb'
+        }
+    }
     compileSdkVersion 25
     //buildToolsVersion "25.0.3"
     defaultConfig {
+        ndk {
+            //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86","arm64-v8a","x86_64"
+        }
         applicationId "com.example.farmerqi.farm"
         minSdkVersion 21
         targetSdkVersion 25
@@ -15,6 +27,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            signingConfig signingConfigs.config
+            zipAlignEnabled true
         }
     }
 }
@@ -44,9 +59,8 @@ dependencies {
         exclude module: "support-v13"
     }
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.1.0"
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation 'com.github.pinguo-zhouwei:CustomPopwindow:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
-    implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'com.zhihu.android:matisse:0.4.3'
+    implementation 'com.amap.api:3dmap:6.1.0'
+    implementation 'com.amap.api:search:6.1.0'
+    implementation 'com.amap.api:location:3.8.0'
 }
