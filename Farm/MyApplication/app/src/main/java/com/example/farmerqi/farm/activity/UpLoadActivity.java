@@ -189,7 +189,6 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
 //            gridViewAdapter.notifyDataSetChanged();
             compressPics(list);
 
-
         }
     }
 

@@ -8,6 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="获取位置"/>
+    <Button
+        android:id="@+id/location_search_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="搜索"/>
     <TextView
         android:id="@+id/location_message_textVIEW"
         android:layout_width="match_parent"
