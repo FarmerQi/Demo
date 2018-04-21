@@ -13,7 +13,8 @@
         android:theme="@style/AppTheme.Base"
         >
         <meta-data android:name="com.amap.api.v2.apikey" android:value="9648ed43db30663756666b339388716f"/>
-        <activity android:name=".activity.LocationActivity">
+        <activity android:name=".activity.LocationActivity"
+            android:theme="@style/LocationActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"></action>
                 <category android:name="android.intent.category.LAUNCHER"></category>

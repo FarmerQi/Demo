@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></FrameLayout>
+    <TextView
+        android:id="@+id/location_result_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:text="没有找到！"
+        android:gravity="center"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/location_result_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+
+    </android.support.v7.widget.RecyclerView>
+</android.support.v7.widget.CardView>

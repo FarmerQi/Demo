@@ -1,30 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/location_activity_layout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <Button
-        android:id="@+id/getLocation_button"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="获取位置"/>
-    <Button
-        android:id="@+id/location_search_button"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="搜索"/>
-    <TextView
-        android:id="@+id/location_message_textVIEW"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/location_activity_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="这里是地理位置信息"
-        android:gravity="center"/>
+        app:title="搜索附近"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:titleTextColor="@color/whitesmoke"
+        android:elevation="4dp"/>
+
     <com.amap.api.maps.MapView
         android:id="@+id/location_mapview"
         android:layout_width="match_parent"
-        android:layout_height="200dp"></com.amap.api.maps.MapView>
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"></com.amap.api.maps.MapView>
 
 
 
+    <Button
 
-</LinearLayout>
+        android:id="@+id/getLocation_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/location_activity_toolbar"
+
+        android:text="获取位置"/>
+    <!--<LinearLayout-->
+        <!--android:id="@+id/location_search_linear_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:background="@color/whitesmoke"-->
+        <!--android:layout_below="@+id/getLocation_button">-->
+        <!--<EditText-->
+            <!--android:id="@+id/getLocation_edit_text"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_weight="4"/>-->
+        <!--<Button-->
+            <!--android:id="@+id/location_search_button"-->
+            <!--android:layout_below="@+id/getLocation_button"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:background="@color/skyblue"-->
+            <!--android:text="搜索"/>-->
+
+    <!--</LinearLayout>-->
+</RelativeLayout>

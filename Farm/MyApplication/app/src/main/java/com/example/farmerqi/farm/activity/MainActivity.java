@@ -1,7 +1,6 @@
 package com.example.farmerqi.farm.activity;
 
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements
         sendFragmentButton = (RelativeLayout)findViewById(R.id.fifth_button);
         sendFragmentButton.setOnClickListener(this);
 
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        mToolbar = (Toolbar)findViewById(R.id.main_activity_toolbar);
         setSupportActionBar(mToolbar);
 
         DrawerLayout mDrawerLayout = (DrawerLayout)findViewById(R.id.nav_drawer_layout);
@@ -276,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements
     //展示PopupWindow
     private void showPopupWindow(){
 
-        View contentView = LayoutInflater.from(this).inflate(R.layout.cardview_popup,null);
+        View contentView = LayoutInflater.from(this).inflate(R.layout.main_activity_cardview_popup,null);
         /*由于加载Activity时，初始化只涉及到当前布局的界面，因此无法获取popupWindow内部的View，
         因此在onCreate方法中初始化这两个控件时，会导致空指针错误。正确做法是在初始化popupWindow时，由popupWindow
         的界面来获取具体的View实例并进行初始化
