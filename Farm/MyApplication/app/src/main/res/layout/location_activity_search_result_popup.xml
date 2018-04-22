@@ -1,21 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
-    <FrameLayout
+    android:layout_height="330dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="20dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp">
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></FrameLayout>
-    <TextView
-        android:id="@+id/location_result_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:text="没有找到！"
-        android:gravity="center"/>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/location_result_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="330dp">
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="300dp">
+            <TextView
+                android:id="@+id/location_result_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:text="没有找到！"
+                android:gravity="center"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/location_result_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
+            </android.support.v7.widget.RecyclerView>
+        </FrameLayout>
 
-    </android.support.v7.widget.RecyclerView>
+        <ImageView
+            android:id="@+id/popup_location_quit_image"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_below="@id/container"
+            android:src="@mipmap/quit"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

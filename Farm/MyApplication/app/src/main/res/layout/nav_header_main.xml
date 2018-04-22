@@ -12,14 +12,13 @@
     android:paddingRight="16dp">
     
     
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/nav_user_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:paddingTop="8dp"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/user"
-        />
+        android:src="@drawable/userimage" />
     <TextView
         android:id="@+id/user_mes_text"
         android:layout_width="wrap_content"

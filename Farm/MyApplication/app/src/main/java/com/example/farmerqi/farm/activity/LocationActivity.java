@@ -2,6 +2,7 @@ package com.example.farmerqi.farm.activity;
 
 import android.Manifest;
 import android.graphics.Point;
+import android.hardware.input.InputManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,8 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 
 import android.widget.TextView;
@@ -31,9 +34,12 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdate;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.Projection;
+import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
@@ -49,6 +55,7 @@ import com.example.farmerqi.farm.R;
 import com.example.farmerqi.farm.adapter.LocationResultAdapter;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,7 +76,8 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
 
     //aMap对象
     AMap aMap = null;
-
+    //搜索结果生成的Markers
+    List<Marker> searchResultMarker = new ArrayList<>();
     private MapView mapView;
     //设置小蓝点的回调监听对象
     private OnLocationChangedListener mListener;
@@ -80,12 +88,16 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
     private double longitude;
 
     //搜索控件
-    private Button locationButton;
+    private ImageView getLocationImage;
+
+    //UI控件
+    UiSettings uiSettings;
 
     //搜索结果
     PopupWindow resultPopupWindow;
     RecyclerView resultRecyclerView;
     TextView resultTextView;
+    ImageView quitImage;
 
     //ToolBar和SearchView
     android.support.v7.widget.Toolbar toolbar;
@@ -100,8 +112,8 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.location_activity_toolbar);
         setSupportActionBar(toolbar);
 
-        locationButton = (Button)findViewById(R.id.getLocation_button);
-        locationButton.setOnClickListener(this);
+        getLocationImage = (ImageView)findViewById(R.id.getLocation_image);
+        getLocationImage.setOnClickListener(this);
 
         mapView = (MapView)findViewById(R.id.location_mapview);
 
@@ -111,25 +123,22 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
         if (aMap == null){
             aMap = mapView.getMap();
         }
+        CameraUpdate cameraUpdate = CameraUpdateFactory.zoomTo(14);
+        aMap.moveCamera(cameraUpdate);
         aMap.setLocationSource(this);
+//        //设置显示指南针按钮
+//        uiSettings.setCompassEnabled(true);
+//        //显示默认的定位按钮
+//        uiSettings.setMyLocationButtonEnabled(true);
         // 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         aMap.setMyLocationEnabled(true);
-
-        MyLocationStyle myLocationStyle = new MyLocationStyle();
-        //定位一次，且将视角移动到地图中心点。
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
-        aMap.setMyLocationStyle(myLocationStyle);
-
-
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_view,menu);
         MenuItem item = menu.findItem(R.id.app_bar_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         //设置搜索栏的提示
         searchView.setQueryHint("输入搜索商品");
         //设置显示提交按钮
@@ -140,10 +149,14 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
         //设置输入框的文字颜色
         searchAutoComplete.setHintTextColor(getResources().getColor(R.color.white));
         searchAutoComplete.setTextColor(getResources().getColor(R.color.white));
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             //提交点击事件
             @Override
             public boolean onQueryTextSubmit(String query) {
+                //searchView清楚焦点
+                searchView.clearFocus();
+                cleanMarkers();
                 searchAround(query);
                 return false;
             }
@@ -199,7 +212,7 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.getLocation_button:
+            case R.id.getLocation_image:
                 LocationActivityPermissionsDispatcher.getLocationWithPermissionCheck(LocationActivity.this);
                 break;
         }
@@ -226,7 +239,6 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
                 aMapLocationClient.setLocationOption(aMapLocationClientOption);
                 //设置定位监听
                 aMapLocationClient.setLocationListener(LocationActivity.this);
-
                 aMapLocationClient.startLocation();
             }
         }).start();
@@ -263,6 +275,7 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
         //开始定位
         LocationActivityPermissionsDispatcher.getLocationWithPermissionCheck(LocationActivity.this);
 
+
     }
 
     @Override
@@ -282,7 +295,11 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
         if (aMapLocationClient != null){
             if (mListener != null && aMapLocation != null){
                 if (aMapLocation.getErrorCode() == 0){
-
+                    //设置显示当前位置
+                    MyLocationStyle myLocationStyle = new MyLocationStyle();
+                    //定位一次，且将视角移动到地图中心点。
+                    myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+                    aMap.setMyLocationStyle(myLocationStyle);
                     latitude = aMapLocation.getLatitude();
                     longitude = aMapLocation.getLongitude();
                     Log.e("Location","国家:" + aMapLocation.getCountry() + "\n"
@@ -293,7 +310,6 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
                             + "区域码：" + aMapLocation.getAdCode() + "\n"
                             + "地址: " + aMapLocation.getAddress() + "\n"
                             + "定位时间: " + formateDate(aMapLocation.getTime(),"yyyy-MM-dd HH:mm:ss") + "\n" );
-
                     mListener.onLocationChanged(aMapLocation);
                 }else {
                     Log.e("AmpError","location Error,ErrorCode:"
@@ -342,6 +358,10 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onCloudSearched(CloudResult cloudResult, int i) {
         Log.e("message",cloudResult.getTotalCount() +"");
+        if (!cloudResult.getClouds().isEmpty()){
+            CameraUpdate cameraUpdate = CameraUpdateFactory.zoomTo(12);
+            aMap.moveCamera(cameraUpdate);
+        }
         for (CloudItem item: cloudResult.getClouds()) {
             LatLonPoint temp = item.getLatLonPoint();
             LatLng tempLatlng = new LatLng(temp.getLatitude(),temp.getLongitude());
@@ -351,9 +371,8 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
             //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.location)));
             View markerView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.location_icon,null);
             markerOptions.icon(BitmapDescriptorFactory.fromView(markerView));
-
             final Marker marker = aMap.addMarker(markerOptions);
-
+            searchResultMarker.add(marker);
         }
         showPopupWindow(cloudResult.getClouds());
 
@@ -363,12 +382,28 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
     public void onCloudItemDetailSearched(CloudItemDetail cloudItemDetail, int i) {
 
     }
+    //清楚Markers
+    public void cleanMarkers(){
+        if (!searchResultMarker.isEmpty()){
+            for (Marker item: searchResultMarker) {
+                item.setVisible(false);
+            }
+            searchResultMarker.clear();
+        }
+    }
 
     //将结果输入到popupWindow
     private void showPopupWindow(List<CloudItem> input){
         View contentView = LayoutInflater.from(this).inflate(R.layout.location_activity_search_result_popup,null);
         resultTextView = (TextView)contentView.findViewById(R.id.location_result_text_view);
         resultRecyclerView = (RecyclerView)contentView.findViewById(R.id.location_result_recycler_view);
+        quitImage = (ImageView)contentView.findViewById(R.id.popup_location_quit_image);
+        quitImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resultPopupWindow.dismiss();
+            }
+        });
         resultRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         resultRecyclerView.setHasFixedSize(false);
         resultRecyclerView.setItemViewCacheSize(10);
@@ -405,14 +440,13 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
         //设置弹出后背景透明度
         backgroundAlpha(0.7f);
         resultPopupWindow.setOnDismissListener(new poponDismissListenner());
-
     }
 
     //在popupWindow消失后处理背景透明度的方法
     class poponDismissListenner implements PopupWindow.OnDismissListener{
-
         @Override
         public void onDismiss() {
+
             backgroundAlpha(1f);
         }
     }

@@ -18,7 +18,7 @@
         >
 
         <RelativeLayout
-            android:id="@+id/first_button"
+            android:id="@+id/buy_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -44,7 +44,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/second_button"
+            android:id="@+id/sale_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -96,7 +96,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/fourth_button"
+            android:id="@+id/message_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -122,7 +122,7 @@
                 />
         </RelativeLayout>
         <RelativeLayout
-            android:id="@+id/fifth_button"
+            android:id="@+id/search_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

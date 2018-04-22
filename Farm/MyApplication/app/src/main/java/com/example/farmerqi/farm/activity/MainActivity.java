@@ -34,6 +34,7 @@ import com.example.farmerqi.farm.fragment.BuyFragment;
 import com.example.farmerqi.farm.fragment.MessageFragment;
 import com.example.farmerqi.farm.fragment.SaleFragment;
 
+
 import com.example.farmerqi.farm.model.Picture;
 
 
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements
     MessageFragment messageFragment;
 
 
+
     //popupWindow窗口
     PopupWindow popupWindow;
 
@@ -82,49 +85,60 @@ public class MainActivity extends AppCompatActivity implements
     LinearLayout saleButton;
     LinearLayout buyButton;
 
+    //用户头像
+    CircleImageView userImageToolbar;
+
+    //DrawerLayout
+    DrawerLayout mDrawerLayout;
+
+    //navigationView
+    NavigationView navigationView;
+
     Toolbar mToolbar;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_nav_main);
 
-
-
-        user = (RelativeLayout) findViewById(R.id.fourth_button);
+        user = (RelativeLayout) findViewById(R.id.message_button);
         user.setOnClickListener(this);
+
+        //用户头像
+        userImageToolbar = (CircleImageView)findViewById(R.id.user_image);
+        userImageToolbar.setOnClickListener(this);
 
         //发布按钮
         releaseButton = (RelativeLayout) findViewById(R.id.third_button);
         releaseButton.setOnClickListener(this);
 
         //供应界面按钮
-        buyFragmnetButton = (RelativeLayout)findViewById(R.id.first_button);
+        buyFragmnetButton = (RelativeLayout)findViewById(R.id.buy_button);
         buyFragmnetButton.setOnClickListener(this);
 
         //需求界面按钮
-        saleFragmentButton = (RelativeLayout)findViewById(R.id.second_button);
+        saleFragmentButton = (RelativeLayout)findViewById(R.id.sale_button);
         saleFragmentButton.setOnClickListener(this);
 
         //不知道该叫啥的按钮
-        sendFragmentButton = (RelativeLayout)findViewById(R.id.fifth_button);
+        sendFragmentButton = (RelativeLayout)findViewById(R.id.search_button);
         sendFragmentButton.setOnClickListener(this);
 
-        mToolbar = (Toolbar)findViewById(R.id.main_activity_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
+        mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
+        mToolbar.setNavigationIcon(R.mipmap.location);
 
-        DrawerLayout mDrawerLayout = (DrawerLayout)findViewById(R.id.nav_drawer_layout);
+
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.nav_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_layout_open_state,R.string.drawer_layout_close_state);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        navigationView = (NavigationView)findViewById(R.id.nav_view);
 
         View headLayout = navigationView.getHeaderView(0);
-        userImage = (ImageView)headLayout.findViewById(R.id.nav_user_image);
+        userImage = (CircleImageView)headLayout.findViewById(R.id.nav_user_image);
         navigationView.setNavigationItemSelectedListener(this);
         userImage.setOnClickListener(this);
 
@@ -190,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
 
+
             case 4:
                 if (messageFragment != null){
                     mainFragmentTransaction.show(messageFragment);
@@ -211,9 +226,6 @@ public class MainActivity extends AppCompatActivity implements
         if (saleFragment != null){
             fragmentTransaction.hide(saleFragment);
         }
-//        if (releaseFragment != null){
-//            fragmentTransaction.hide(releaseFragment);
-//        }
         if (messageFragment != null){
             fragmentTransaction.hide(messageFragment);
         }
@@ -223,37 +235,44 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            //导航栏的点击事件
+            //导航栏的用户头像点击事件
             case R.id.nav_user_image:
                 Toast.makeText(this,"hi,FarmerQi",Toast.LENGTH_SHORT).show();
                 break;
 
-            case R.id.first_button:
+            //ToolBar上的用户头像点击事件
+            case R.id.user_image:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                break;
+
+            case R.id.buy_button:
                 Toast.makeText(this,"打开BuyFragment",Toast.LENGTH_SHORT).show();
                 showFragment(1);
                 break;
 
-            case R.id.second_button:
+            case R.id.sale_button:
                 Toast.makeText(this,"打开SaleFragment",Toast.LENGTH_SHORT).show();
                 showFragment(2);
                 break;
             //POPUP WINDOW的点击事件
             case R.id.third_button:
                 showPopupWindow();
-
                 break;
 
-            case R.id.fourth_button:
+            case R.id.message_button:
                 Toast.makeText(this,"打开messageFragment",Toast.LENGTH_SHORT).show();
                 showFragment(4);
                 break;
 
-            case R.id.fifth_button:
-                Toast.makeText(this,"打开登录界面",Toast.LENGTH_SHORT).show();
-                Intent toLoginActivity = new Intent(MainActivity.this,LoginActivity.class);
-                startActivity(toLoginActivity);
+            case R.id.search_button:
+//                Toast.makeText(this,"打开登录界面",Toast.LENGTH_SHORT).show();
+//                Intent toLoginActivity = new Intent(MainActivity.this,LoginActivity.class);
+//                startActivity(toLoginActivity);
+//                showFragment(3);
+                Intent toLocationSearchActivity = new Intent(MainActivity.this,LocationActivity.class);
+                startActivity(toLocationSearchActivity);
                 break;
-
+            //popupWindow的界面点击事件
             case R.id.popup_buy_linear_layout:
                 Intent toBuyUploadActivity = new Intent(MainActivity.this,UpLoadActivity.class);
                 startActivity(toBuyUploadActivity);
@@ -267,7 +286,6 @@ public class MainActivity extends AppCompatActivity implements
                 Toast.makeText(this,"这是卖东西按钮",Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
                 break;
-
         }
 
     }
@@ -325,7 +343,6 @@ public class MainActivity extends AppCompatActivity implements
 
     //在popupWindow消失后处理背景透明度的方法
     class poponDismissListenner implements PopupWindow.OnDismissListener{
-
         @Override
         public void onDismiss() {
             backgroundAlpha(1f);

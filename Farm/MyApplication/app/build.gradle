@@ -63,4 +63,6 @@ dependencies {
     implementation 'com.amap.api:3dmap:6.1.0'
     implementation 'com.amap.api:search:6.1.0'
     implementation 'com.amap.api:location:3.8.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }

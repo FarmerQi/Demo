@@ -10,9 +10,9 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/whitesmoke</item>
-        <item name="android:textColorSecondary">@color/whitesmoke</item>
+        <!--<item name="android:textColorSecondary">@color/whitesmoke</item>-->
     </style>
     <style name="LocationActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
