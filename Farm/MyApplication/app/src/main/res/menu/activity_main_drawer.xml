@@ -9,33 +9,30 @@
         <item
             android:id="@+id/First_item"
             android:icon="@drawable/like"
-            android:title="Like">
+            android:title="已收藏">
         </item>
 
         <item
             android:id="@+id/Second_item"
             android:icon="@drawable/pic"
-            android:title="Picture">
+            android:title="已发布">
         </item>
 
-        <item
-            android:id="@+id/Third_item"
-            android:icon="@drawable/message"
-            android:title="Message">
 
-        </item>
     </group>
-    <item android:title="HHHHH">
+    <item android:title="个人信息">
         <menu>
             <item
                 android:id="@+id/Fourth_item"
-                android:icon="@drawable/like"
-                android:title="LOL">
+                android:icon="@mipmap/edit"
+                android:title="修改个人信息">
             </item>
             <item
                 android:id="@+id/fifth_item"
                 android:icon="@drawable/user"
-                android:title="PUBG">
+                android:title="退出账户"
+
+                >
             </item>
         </menu>
     </item>

@@ -29,7 +29,6 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:hint="账号"
-
             />
         <EditText
             android:id="@+id/password_edit_text"
@@ -55,8 +54,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="新用户注册"
+            android:textColor="@color/blue"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/toMainText"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="跳过"
+        android:textColor="@color/gray"
+        android:gravity="center"/>
 
 </RelativeLayout>

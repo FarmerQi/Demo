@@ -102,8 +102,6 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
     //ToolBar和SearchView
     android.support.v7.widget.Toolbar toolbar;
 
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +109,13 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
 
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.location_activity_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         getLocationImage = (ImageView)findViewById(R.id.getLocation_image);
         getLocationImage.setOnClickListener(this);
@@ -141,8 +146,8 @@ public class LocationActivity extends AppCompatActivity implements View.OnClickL
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
         //设置搜索栏的提示
         searchView.setQueryHint("输入搜索商品");
-        //设置显示提交按钮
-        searchView.setSubmitButtonEnabled(true);
+        //设置不显示提交按钮
+        searchView.setSubmitButtonEnabled(false);
         //默认为true在框内，设置false则在框外
         //searchView.setIconifiedByDefault(false);
         SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);

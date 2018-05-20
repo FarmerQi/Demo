@@ -1,23 +1,13 @@
 package com.example.farmerqi.farm.activity;
 
 import android.Manifest;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
-import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import android.os.Environment;
 import android.os.Handler;
-import android.os.ParcelFileDescriptor;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -28,25 +18,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.example.farmerqi.farm.R;
 import com.example.farmerqi.farm.adapter.GridViewAdapter;
 import com.example.farmerqi.farm.utils.UriToPathUtil;
-import com.facebook.common.internal.Files;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,29 +57,54 @@ import top.zibin.luban.OnCompressListener;
  * Created by FarmerQi on 2018/4/8.
  */
 @RuntimePermissions
-public class UpLoadActivity extends AppCompatActivity implements View.OnClickListener{
+public class UpLoadActivity extends AppCompatActivity implements View.OnClickListener,AMapLocationListener{
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final String RESULT_TAG = "responce";
 
+
+    private ImageView backImage;
     private EditText uploadEditText;
     private GridView uploadGridView;
     private GridViewAdapter gridViewAdapter;
     private Button selectButton;
     private List<Uri> list;
     private List<Uri> compressedPhotos = new ArrayList<>();
+    private TextView titleText;
+
+    private ImageView getLocationImage;
+    private TextView locationInfoText;
+
+    public AMapLocationClient aMapLocationClient = null;
+    public AMapLocationClientOption aMapLocationClientOption = null;
 
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.upload_activity);
+        setContentView(R.layout.activity_upload_layout);
+        Intent title = getIntent();
+        Bundle message = title.getExtras();
+        String titleName = message.getString("title");
+
         uploadEditText = (EditText)findViewById(R.id.introduce_edit_text);
         uploadGridView = (GridView)findViewById(R.id.image_grid_view);
-        selectButton = (Button)findViewById(R.id.test);
+
+        //获取地理位置按钮
+        getLocationImage = (ImageView)findViewById(R.id.upload_activity_getlocation_image);
+        getLocationImage.setOnClickListener(this);
+
+        //地理位置信息
+        locationInfoText = (TextView)findViewById(R.id.upload_activity_location_result_text);
+
+        selectButton = (Button)findViewById(R.id.upload_activity_release_button);
         selectButton.setOnClickListener(this);
 
+        backImage = (ImageView)findViewById(R.id.upload_back_image);
+        backImage.setOnClickListener(this);
 
+        titleText = (TextView)findViewById(R.id.upload_activity_title);
+        titleText.setText(titleName);
         /**获取Drawable目录下的图片的URI的方法*/
 //        list = new ArrayList<>();
 //        Uri uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
@@ -100,6 +112,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
 //        + getResources().getResourceTypeName(R.drawable.add) + "/"
 //        + getResources().getResourceEntryName(R.drawable.add));
 //        list.add(uri);
+
 
 
         gridViewAdapter = new GridViewAdapter(UpLoadActivity.this,list);
@@ -121,17 +134,33 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    //初始化地理位置
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UpLoadActivityPermissionsDispatcher.getLocationWithPermissionCheck(UpLoadActivity.this);
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.test:
+            case R.id.upload_activity_release_button:
                 for (int i = 0; i < compressedPhotos.size(); i++) {
                     Uri result = compressedPhotos.get(i);
                     sendPic(new File(UriToPathUtil.getRealFilePath(UpLoadActivity.this,result)));
                     Log.e("路径是.........",compressedPhotos.get(i).toString());
                 }
+                finish();
                 break;
+
+            case R.id.upload_back_image:
+                finish();
+                break;
+
+            case R.id.upload_activity_getlocation_image:
+                UpLoadActivityPermissionsDispatcher.getLocationWithPermissionCheck(UpLoadActivity.this);
+                break;
+
         }
     }
 
@@ -152,6 +181,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         UpLoadActivityPermissionsDispatcher.onRequestPermissionsResult(this,requestCode,grantResults);
+        UpLoadActivityPermissionsDispatcher.onRequestPermissionsResult(UpLoadActivity.this,requestCode,grantResults);
     }
 
     @Override
@@ -263,6 +293,43 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
 
 
     /**
+     * 获取地理位置*/
+    @NeedsPermission({Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE})
+    public void getLocation(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                aMapLocationClient = new AMapLocationClient(getApplicationContext());
+                aMapLocationClientOption = new AMapLocationClientOption();
+
+                //设置定位模式为高精准模式
+                aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+                aMapLocationClientOption.setNeedAddress(true);
+                aMapLocationClientOption.setOnceLocation(true);
+
+                aMapLocationClient.setLocationOption(aMapLocationClientOption);
+                //设置定位监听
+                aMapLocationClient.setLocationListener(UpLoadActivity.this);
+                aMapLocationClient.startLocation();
+            }
+        }).start();
+    }
+
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (aMapLocationClient != null){
+            if (aMapLocation !=null && aMapLocation.getErrorCode() == 0){
+                locationInfoText.setText(aMapLocation.getProvince() + "," + aMapLocation.getCity() + "," + aMapLocation.getDistrict() + "," + aMapLocation.getStreet());
+            }
+        }
+    }
+
+    /**
+     *
      * 发送图片*/
     private void sendPic(final File input){
 
@@ -292,6 +359,7 @@ public class UpLoadActivity extends AppCompatActivity implements View.OnClickLis
             }
         }).start();
     }
+
 
 
 }

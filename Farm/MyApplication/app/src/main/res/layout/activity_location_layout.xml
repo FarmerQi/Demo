@@ -8,11 +8,13 @@
         android:id="@+id/location_activity_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="搜索附近"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:titleTextColor="@color/whitesmoke"
-        android:elevation="4dp"/>
+        android:elevation="4dp"
+        app:title="搜索附近">
+
+    </android.support.v7.widget.Toolbar>
 
     <com.amap.api.maps.MapView
         android:id="@+id/location_mapview"

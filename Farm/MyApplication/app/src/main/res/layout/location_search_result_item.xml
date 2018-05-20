@@ -12,6 +12,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
+        android:src="@drawable/watermelon"
         />
     <TextView
         android:id="@+id/location_search_result_item_text_view"

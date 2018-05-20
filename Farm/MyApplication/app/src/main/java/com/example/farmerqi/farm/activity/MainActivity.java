@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -94,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements
     //navigationView
     NavigationView navigationView;
 
+    //title
+    TextView title;
+
     Toolbar mToolbar;
 
     @Override
@@ -103,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements
 
         user = (RelativeLayout) findViewById(R.id.message_button);
         user.setOnClickListener(this);
+
+
+        title = (TextView)findViewById(R.id.main_activity_title);
 
         //用户头像
         userImageToolbar = (CircleImageView)findViewById(R.id.user_image);
@@ -139,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements
 
         View headLayout = navigationView.getHeaderView(0);
         userImage = (CircleImageView)headLayout.findViewById(R.id.nav_user_image);
+        //在此处加载用户头像
+
         navigationView.setNavigationItemSelectedListener(this);
         userImage.setOnClickListener(this);
 
@@ -165,11 +174,19 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
         switch (id){
             case R.id.First_item:
+                Intent toCollectionActivity = new Intent(MainActivity.this,CollectionActivity.class);
+                startActivity(toCollectionActivity);
+                break;
             case R.id.Second_item:
-            case R.id.Third_item:
+                Intent toReleaseActivity = new Intent(MainActivity.this,ReleaseActivity.class);
+                startActivity(toReleaseActivity);
+                break;
             case R.id.Fourth_item:
+
+                break;
             case R.id.fifth_item:
-                Toast.makeText(this,"Hello,FarmerQi!",Toast.LENGTH_SHORT).show();
+                Intent toLoginActivity = new Intent(MainActivity.this,LoginActivity.class);
+                startActivity(toLoginActivity);
                 break;
 
         }
@@ -185,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements
         switch (index){
 
             case 1:
+                title.setText("供应信息");
                 if (buyFragment != null){
                     mainFragmentTransaction.show(buyFragment);
                 }else {
@@ -195,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case 2:
-
+                title.setText("需求信息");
                 if (saleFragment != null){
                     mainFragmentTransaction.show(saleFragment);
                 }else {
@@ -234,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()){
             //导航栏的用户头像点击事件
             case R.id.nav_user_image:
@@ -260,8 +279,8 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.message_button:
-                Toast.makeText(this,"打开messageFragment",Toast.LENGTH_SHORT).show();
-                showFragment(4);
+                Intent toLoginActivity = new Intent(MainActivity.this,ProductInfoActivity.class);
+                startActivity(toLoginActivity);
                 break;
 
             case R.id.search_button:
@@ -275,13 +294,16 @@ public class MainActivity extends AppCompatActivity implements
             //popupWindow的界面点击事件
             case R.id.popup_buy_linear_layout:
                 Intent toBuyUploadActivity = new Intent(MainActivity.this,UpLoadActivity.class);
+                toBuyUploadActivity.putExtra("title","发布需求信息");
                 startActivity(toBuyUploadActivity);
                 Toast.makeText(this,"这是卖东西的按钮",Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
                 break;
 
             case R.id.popup_sale_linear_layout:
+
                 Intent toSaleUploadActivity = new Intent(MainActivity.this,UpLoadActivity.class);
+                toSaleUploadActivity.putExtra("title","发布供应信息");
                 startActivity(toSaleUploadActivity);
                 Toast.makeText(this,"这是卖东西按钮",Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();

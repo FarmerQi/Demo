@@ -22,19 +22,56 @@
         <ImageView
             android:id="@+id/cardview_image"
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="200dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="5dp"/>
-        <TextView
-            android:id="@+id/card_view_text"
+            android:layout_marginBottom="10dp"/>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_below="@+id/cardview_image"/>
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:layout_below="@+id/cardview_image">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_pic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:civ_border_color="@color/whitesmoke"
+                app:civ_border_width="2dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/buytag"
+                app:civ_border_color="@color/red"
+                app:civ_border_width="1dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center"
+
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/product_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+                <TextView
+                    android:id="@+id/product_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+                <TextView
+                    android:id="@+id/product_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 

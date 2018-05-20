@@ -39,7 +39,12 @@ public class LocationResultAdapter extends RecyclerView.Adapter<LocationResultAd
             holder.resultImage.setVisibility(View.GONE);
         }else {
             holder.resultText.setText(input.get(position).getTitle() + "\n"+input.get(position).getSnippet());
-            Picasso.get().load(input.get(position).getCustomfield().get("user_pic")).into(holder.resultImage);
+            holder.resultImage.setBackgroundResource(R.drawable.watermelon);
+//            if (input.get(position).getCustomfield().get("user_pic")==null){
+//                holder.resultImage.setBackgroundResource(R.drawable.watermelon);
+//            }else {
+//                Picasso.get().load(input.get(position).getCustomfield().get("user_pic")).into(holder.resultImage);
+//            }
             //holder.resultImage.setBackgroundResource(R.drawable.placeholderpic);
         }
 

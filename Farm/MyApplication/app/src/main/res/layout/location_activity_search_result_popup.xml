@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="330dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="20dp"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp">
+    android:background="@drawable/popup_location_result_shap"
+
+    >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="330dp">

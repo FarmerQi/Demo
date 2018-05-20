@@ -1,12 +1,33 @@
 package com.example.farmerqi.farm.model;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 /**
  * Created by FarmerQi on 2018/2/20.
  */
 public class Picture {
-    private int id;
+    private int picID;
+    private int productID;
     private String name;
     private String location;
+    private Timestamp createdTime;
+
+    public int getProductID() {
+        return productID;
+    }
+
+    public void setProductID(int productID) {
+        this.productID = productID;
+    }
+
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Timestamp createdTime) {
+        this.createdTime = createdTime;
+    }
 
     public String getName() {
         return name;
@@ -24,11 +45,11 @@ public class Picture {
         this.location = location;
     }
 
-    public int getId() {
-        return id;
+    public int getPicID() {
+        return picID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPicID(int picID) {
+        this.picID = picID;
     }
 }

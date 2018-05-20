@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_activity_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:titleTextColor="@color/whitesmoke"
+        android:elevation="4dp">
+
+        <ImageView
+            android:id="@+id/upload_back_image"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/back"/>
+        <TextView
+            android:id="@+id/upload_activity_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:textSize="18sp"
+            android:text="发布消息"
+            android:textColor="@color/whitesmoke"/>
+        <Button
+            android:id="@+id/upload_activity_release_button"
+            android:layout_width="45dp"
+            android:layout_height="30dp"
+            android:text="发表"
+            android:textSize="14sp"
+            android:textColor="@color/whitesmoke"
+            android:background="@drawable/button_shape"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"/>
+    </android.support.v7.widget.Toolbar>
+
+
+    <EditText
+        android:id="@+id/introduce_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:hint="有关商品介绍..."
+        android:gravity="top"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp">
+        <ImageView
+            android:id="@+id/upload_activity_getlocation_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:src="@mipmap/location"
+            />
+        <TextView
+            android:layout_marginLeft="3dp"
+            android:id="@+id/upload_activity_location_result_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="地理位置信息"
+            android:gravity="center_vertical"/>
+    </LinearLayout>
+
+
+
+    <GridView
+        android:id="@+id/image_grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:horizontalSpacing="5dp"
+        android:numColumns="3"
+        android:verticalSpacing="5dp"></GridView>
+
+
+
+
+
+</LinearLayout>

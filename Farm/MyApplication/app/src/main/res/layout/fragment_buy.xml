@@ -4,11 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.farmerqi.farm.fragment.BuyFragment">
-    <Button
-        android:id="@+id/send_button_buy_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Buy发送"/>
+
 
 
     <android.support.v7.widget.RecyclerView

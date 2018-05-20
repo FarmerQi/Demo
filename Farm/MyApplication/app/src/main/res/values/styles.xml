@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>sea
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -14,6 +15,7 @@
         <item name="colorAccent">@color/whitesmoke</item>
         <!--<item name="android:textColorSecondary">@color/whitesmoke</item>-->
     </style>
+
     <style name="LocationActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -33,6 +35,10 @@
         <item name="searchIcon">@mipmap/search</item>
         <item name="searchHintIcon">@null</item>
     </style>
+
+    <style name="AppTheme.Base.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.Base.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>
